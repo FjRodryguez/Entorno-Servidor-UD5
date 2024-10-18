@@ -9,8 +9,8 @@ use PDO;
 class DBManager
 {
     // Contenedor de la instancia de la Clase
-    private static DBManager $instance;
-    private ?PDO $db;
+    private static ?DBManager $instance = null;
+    private ?PDO $db = null;
 
     //Previene creacion de objetos via new
 

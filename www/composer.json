@@ -15,8 +15,5 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "@stable"
-    },
-    "scripts": {
-        "phpcs": "phpcs --standard=PSR12"
     }
 }
