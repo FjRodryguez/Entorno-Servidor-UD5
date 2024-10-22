@@ -81,6 +81,33 @@ class FrontController
             'get'
         );
 
+        Route::add(
+            '/poblacion-pontevedra',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionPontevedra();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/poblacion-grupos-edad',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionGruposEdad();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/poblacion-pontevedra-2020',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionPontevedra2020();
+            },
+            'get'
+        );
+
         Route::pathNotFound(
             function () {
                 $controller = new \Com\Daw2\Controllers\ErroresController();
