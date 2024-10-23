@@ -108,6 +108,24 @@ class FrontController
             'get'
         );
 
+        Route::add(
+            '/formulario-poblacion-pontevedra',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showFormularioAñadir();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/formulario-poblacion-pontevedra',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->doFormularioAñadir();
+            },
+            'post'
+        );
+
         Route::pathNotFound(
             function () {
                 $controller = new \Com\Daw2\Controllers\ErroresController();
