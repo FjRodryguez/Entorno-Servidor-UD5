@@ -1,46 +1,45 @@
-<!-- DataTables -->
-<link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-<link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<!--Inicio HTML -->
 <div class="row">
     <div class="col-12">
-        <?php if (!empty($data)) { ?>
+        <?php
+        if (count($registros) > 1) {
+            ?>
             <div class="card shadow mb-4">
                 <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary"><?php echo $csv_div_titulo; ?></h6>
+                    <div class="col-9"><h6 class="m-0 font-weight-bold text-primary"><?php echo $titulo; ?></h6></div>
+                    <div class="col-3 text-right"><a href="<?php echo $_SERVER['REQUEST_URI']; ?>/new" value="" class="btn btn-primary">+ Nuevo registro</a></div>
                 </div>
-                <div class="card-body">
-                    <table id="csvTable" class="table table-bordered table-striped  dataTable">
+                <!-- Card Body -->
+                <div class="card-body" id="card_table">
+                    <!--<form action="./?sec=formulario" method="post">                   -->
+                    <table id="tabladatos" class="table table-striped">
                         <?php
-                        $first = true;
-                        foreach ($data
-
-                                 as $fila){
-                        if ($first){
+                        $primerRegistro = true;
+                        foreach ($registros as $row) {
+                        if ($primerRegistro) {
                         ?>
                         <thead>
                         <tr>
                             <?php
-                            foreach ($fila as $columna) {
+                            foreach ($row as $dato) {
                                 ?>
-                                <th><?php echo $columna; ?></th>
+                                <th><?php echo $dato; ?></th>
                                 <?php
                             }
-                            $first = false;
+                            $primerRegistro = false;
                             ?>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
-                        }
-                        else {
+                        } else {
                             ?>
                             <tr>
                                 <?php
-                                foreach ($fila as $columna) {
+                                foreach ($row as $dato) {
                                     ?>
-                                    <td><?php echo $columna; ?></td>
+                                    <td><?php echo $dato; ?></td>
                                     <?php
                                 }
                                 ?>
@@ -50,7 +49,9 @@
                         }
                         ?>
                         </tbody>
-                        <?php if (isset($min) && isset($max)) { ?>
+                        <?php
+                        if (isset($min) && isset($max)) {
+                            ?>
                             <tfoot>
                             <tr>
                                 <td>
@@ -60,10 +61,10 @@
                                     <?php echo $max[1]; ?>
                                 </td>
                                 <td>
-                                    MAX
+                                    <?php echo $showMinMax ? 'MAX' : ''; ?>
                                 </td>
                                 <td>
-                                    <?php echo number_format(num:$max[3], thousands_separator: '.'); ?>
+                                    <?php echo number_format(num: $max[3], thousands_separator: '.'); ?>
                                 </td>
                             </tr>
                             <tr>
@@ -74,14 +75,16 @@
                                     <?php echo $min[1]; ?>
                                 </td>
                                 <td>
-                                    MIN
+                                    <?php echo $showMinMax ? 'MIN' : ''; ?>
                                 </td>
                                 <td>
-                                    <?php echo number_format(num:$min[3], thousands_separator: '.'); ?>
+                                    <?php echo number_format(num: $min[3], thousands_separator: '.'); ?>
                                 </td>
                             </tr>
                             </tfoot>
-                        <?php } ?>
+                            <?php
+                        }
+                        ?>
                     </table>
                 </div>
             </div>
@@ -91,7 +94,9 @@
             <div class="alert alert-warning" role="alert">
                 No hay registros en el fichero seleccionado
             </div>
-        <?php } ?>
+            <?php
+        }
+        ?>
     </div>
 </div>
-<!--<script src="./vendor/jquery/jquery.min.js"></script>-->
+<!--Fin HTML -->
