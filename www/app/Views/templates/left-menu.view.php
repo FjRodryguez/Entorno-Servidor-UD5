@@ -60,13 +60,6 @@
                         <p>Población Pontevedra 2020 totales</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href= "<?php echo $_ENV['host.folder'];?>formulario-poblacion-pontevedra"
-                       class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'formulario-poblacion-pontevedra' ? 'active' : ''; ?>">
-                        <i class="fas fa-laptop-code nav-icon"></i>
-                        <p>Formulario población Pontevedra</p>
-                    </a>
-                </li>
             </ul>
         </li>
     </ul>

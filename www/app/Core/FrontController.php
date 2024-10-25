@@ -112,16 +112,16 @@ class FrontController
             '/formulario-poblacion-pontevedra',
             function () {
                 $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->showFormularioAñadir();
+                $controlador->showAltaPoblacionPontevedra();
             },
             'get'
         );
 
         Route::add(
-            '/formulario-poblacion-pontevedra',
+            '/poblacion-pontevedra/new',
             function () {
                 $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->doFormularioAñadir();
+                $controlador->doAltaPoblacionPontevedra();
             },
             'post'
         );
