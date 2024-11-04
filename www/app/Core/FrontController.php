@@ -109,7 +109,7 @@ class FrontController
         );
 
         Route::add(
-            '/formulario-poblacion-pontevedra',
+            '/poblacion-pontevedra/new',
             function () {
                 $controlador = new \Com\Daw2\Controllers\CsvController();
                 $controlador->showAltaPoblacionPontevedra();
@@ -124,6 +124,14 @@ class FrontController
                 $controlador->doAltaPoblacionPontevedra();
             },
             'post'
+        );
+        Route::add(
+            '/test-model',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->testConect();
+            },
+            'get'
         );
 
         Route::pathNotFound(

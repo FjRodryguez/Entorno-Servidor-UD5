@@ -3,7 +3,7 @@
         <div class="card shadow mb-4">
             <form method="post" action="">
                 <div
-                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Alta Población Pontevedra</h6>
                 </div>
                 <!-- Card Body -->
@@ -36,7 +36,7 @@
                         <div class="col-12 col-md-6">
                             <div class="mb-3">
                                 <label for="anho">Año:</label>
-                                <select name="anho" id="anho" class="form-control">
+                                <select name="anho" id="anho" class="form-control select2">
                                     <?php
                                     for ($i = date('Y'); $i > date('Y') - 100; $i--) {
                                         ?>
