@@ -221,7 +221,7 @@ class UsuarioController extends BaseController
             $insertData = $_POST;
             $insertData['activo'] = isset($insertData['activo']) ? 1 : 0;
             foreach ($insertData as $key => $value) {
-                if (empty($value)) {
+                if ($value === '' || $value === null) {
                     $insertData[$key] = null;
                 }
             }
