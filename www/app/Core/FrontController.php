@@ -10,120 +10,12 @@ class FrontController
     public static function main()
     {
         Route::add(
-            '/',
+            '/usuarios-filtro',
             function () {
-                $controlador = new \Com\Daw2\Controllers\InicioController();
-                $controlador->index();
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->usuariosFiltro();
             },
             'get'
-        );
-
-        Route::add(
-            '/test',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->showFormularioNombre();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/test',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->doFormularioNombre();
-            },
-            'post'
-        );
-
-        Route::add(
-            '/anagrama',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->showAnagrama();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/anagrama',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->doAnagrama();
-            },
-            'post'
-        );
-
-        Route::add(
-            '/mismas-letras',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->showMismasLetras();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/mismas-letras',
-            function () {
-                $controlador = new EjerciciosController();
-                $controlador->doMismasLetras();
-            },
-            'post'
-        );
-
-        Route::add(
-            '/demo-proveedores',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\InicioController();
-                $controlador->demo();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/poblacion-pontevedra',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->showPoblacionPontevedra();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/poblacion-grupos-edad',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->showPoblacionGruposEdad();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/poblacion-pontevedra-2020',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->showPoblacionPontevedra2020();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/poblacion-pontevedra/new',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->showAltaPoblacionPontevedra();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/poblacion-pontevedra/new',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CsvController();
-                $controlador->doAltaPoblacionPontevedra();
-            },
-            'post'
         );
 
         Route::add(
@@ -131,25 +23,6 @@ class FrontController
             function () {
                 $controlador = new \Com\Daw2\Controllers\UsuarioController();
                 $controlador->getAllUsuarios();
-            },
-            'get'
-        );
-
-
-        Route::add(
-            '/usuarios-filtro',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                $controlador->usuariosFiltros();
-            },
-            'get'
-        );
-
-        Route::add(
-            '/categorias',
-            function () {
-                $controlador = new \Com\Daw2\Controllers\CategoriaController();
-                $controlador->categorias();
             },
             'get'
         );
@@ -177,6 +50,109 @@ class FrontController
             function () {
                 $controlador = new \Com\Daw2\Controllers\UsuarioController();
                 $controlador->getUsuariosCarlos();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/usuarios/new',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->showNewUsuario();
+            },
+            'get'
+        );
+        Route::add(
+            '/usuarios/new',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->doNewUsuario();
+            },
+            'post'
+        );
+        Route::add(
+            '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
+            function ($usuario) {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->showEditUsuario($usuario);
+            },
+            'get'
+        );
+        Route::add(
+            '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
+            function ($usuario) {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->doEditUsuario($usuario);
+            },
+            'post'
+        );
+        Route::add(
+            '/usuarios/delete/(\p{L}[\p{L}_\p{N}]{2,49})',
+            function ($usuario) {
+                $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                $controlador->deleteUsuario($usuario);
+            },
+            'get'
+        );
+
+        Route::add(
+            '/',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\InicioController();
+                $controlador->index();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/poblacion-pontevedra',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionPontevedra();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/poblacion-pontevedra/new',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showAltaPoblacionPontevedra();
+            },
+            'get'
+        );
+        Route::add(
+            '/poblacion-pontevedra/new',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->doAltaPoblacionPontevedra();
+            },
+            'post'
+        );
+
+        Route::add(
+            '/poblacion-grupos-edad',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionGruposEdad();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/poblacion-pontevedra-2020',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\CsvController();
+                $controlador->showPoblacionPontevedra2020();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/demo-proveedores',
+            function () {
+                $controlador = new \Com\Daw2\Controllers\InicioController();
+                $controlador->demo();
             },
             'get'
         );
