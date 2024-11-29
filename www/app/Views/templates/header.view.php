@@ -28,7 +28,8 @@
     <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
     <!-- Select 2 -->
     <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+    <link rel="stylesheet" href="<?php echo isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] ? 'plugins/select2-bootstrap4-theme/select2-bootstrap4-dark.css' : 'plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css'; ?>">
     <?php
     //Para la carga adicional de ficheros JS desde un array
     if (isset($css) && is_array($css)) {
@@ -54,6 +55,11 @@
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
             <!-- Navbar Search -->
+            <li class="nav-item">
+                <a class="nav-link" data-widget="navbar-preferences" href="<?php echo $_ENV['host.folder']; ?>preferencias" role="button">
+                    <i class="fas fa-sliders-h"></i>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" data-widget="navbar-search" href="#" role="button">
                     <i class="text-danger fas fa-sign-out-alt"></i>
@@ -84,7 +90,7 @@
                     <img src="assets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">Usuario</a>
+                    <a href="#" class="d-block"><?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Usuario'; ?></a>
                 </div>
             </div>
             <?php
@@ -129,3 +135,23 @@
 
         <section class="content">
             <div class="container-fluid">
+                <!-- TODO: Mostrar errores -->
+                <?php
+                if (isset($flashMessages) && is_array($flashMessages)) {
+                foreach ($flashMessages as $flashMessage) {
+                ?>
+                <div class="alert alert-<?php echo $flashMessage->getTipoMensaje(); ?> alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php
+                    if ($flashMessage->getTitulo() !== '') {
+                        ?>
+                        <h5><?php echo $flashMessage->getTitulo(); ?></h5>
+                        <?php
+                    }
+                    ?>
+                    <p><?php echo $flashMessage->getTexto(); ?></p>
+                </div>
+<?php
+}
+}
+?>

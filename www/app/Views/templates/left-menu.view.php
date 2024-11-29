@@ -10,6 +10,15 @@
                 </p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="/preferencias"
+               class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'preferencias' ? 'active' : ''; ?>">
+                <i class="nav-icon fas fa-book"></i>
+                <p>
+                    Preferencias
+                </p>
+            </a>
+        </li>
         <!-- Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library -->
         <li class="nav-item <?php echo (in_array($_SERVER['REQUEST_URI'], [$_ENV['host.folder'] . 'demo-proveedores'])) ? 'menu-open' : ''; ?>">
@@ -62,23 +71,32 @@
                     </a>
                 </li>
             </ul>
-        <li class="nav-item <?php echo (in_array($_SERVER['REQUEST_URI'], [$_ENV['host.folder'] . 'usuarios-filtro'])) ? 'menu-open' : ''; ?>">
-            <a href="#" class="nav-link">
+        <li class="nav-item">
+            <a href="/usuarios-filtro"
+               class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'usuarios-filtro' ? 'active' : ''; ?>">
                 <i class="nav-icon fas fa-user"></i>
                 <p>
                     Usuarios
-                    <i class="right fas fa-angle-left"></i>
                 </p>
             </a>
-            <ul class="nav nav-treeview">
-                <li class="nav-item">
-                    <a href="<?php echo $_ENV['host.folder']; ?>usuarios-filtro"
-                       class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'usuarios-filtro' ? 'active' : ''; ?>">
-                        <i class="fas fa-user-circle nav-icon"></i>
-                        <p>Filtro usuarios</p>
-                    </a>
-                </li>
-            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="/productos"
+               class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'productos' ? 'active' : ''; ?>">
+                <i class="nav-icon fas fa-calendar"></i>
+                <p>
+                    Productos
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/categorias"
+               class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'categorias' ? 'active' : ''; ?>">
+                <i class="nav-icon fas fa-bahai"></i>
+                <p>
+                    Categorias
+                </p>
+            </a>
         </li>
     </ul>
 </nav>

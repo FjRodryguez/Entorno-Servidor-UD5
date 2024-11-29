@@ -11,7 +11,7 @@ class CategoriaModel extends BaseDbModel
 {
     function getAllCategorias()
     {
-        $stmt = $this->pdo->query("SELECT * FROM categoria");
+        $stmt = $this->pdo->query("SELECT * FROM categoria ORDER BY nombre_categoria");
         $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($categorias as &$categoria) {
             $categoria['nombre_completo'] = $this->getPadre($categoria['id_padre']) . $categoria['nombre_categoria'];

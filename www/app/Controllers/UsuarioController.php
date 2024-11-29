@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Com\Daw2\Controllers;
 
 use Com\Daw2\Core\BaseController;
+use Com\Daw2\Libraries\Mensaje;
 use Com\Daw2\Models\AuxCountriesModel;
 use Com\Daw2\Models\AuxRolModel;
 use Com\Daw2\Models\UsuarioModel;
 use Decimal\Decimal;
+use http\Message;
 
 class UsuarioController extends BaseController
 {
@@ -21,6 +23,12 @@ class UsuarioController extends BaseController
             'titulo' => 'Listado usuarios',
             'breadcrumb' => ['Usuarios', 'Listado usuarios']
         ];
+
+        if (isset($_SESSION['flash']['message'])) {
+            $data['message'] = $_SESSION['flash']['message'];
+            $data['message_type'] = $_SESSION['flash']['message_type'] ?? 'info';
+            unset($_SESSION['flash']);
+        }
         $auxRolModel = new AuxRolModel();
         $data['roles'] = $auxRolModel->getAll();
 
@@ -78,7 +86,6 @@ class UsuarioController extends BaseController
         $data['maxPage'] = $this->getMaxPage($registros);
 
         $usuarios = $model->getUsuarioFiltros($filtros, $order, $page);
-
 
         $data['input'] = filter_input_array(INPUT_GET, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
@@ -221,16 +228,19 @@ class UsuarioController extends BaseController
             $insertData = $_POST;
             $insertData['activo'] = isset($insertData['activo']) ? 1 : 0;
             foreach ($insertData as $key => $value) {
-                if ($value === '' || $value === null) {
+                if ($value === '') {
                     $insertData[$key] = null;
                 }
             }
             $model = new UsuarioModel();
             if ($model->insertUsuario($insertData)) {
+                $mensaje = new Mensaje('Usuario guardado correctamente', Mensaje::SUCCESS, 'Éxito');
+                $this->addFlashMessage($mensaje);
                 header('Location: /usuarios-filtro');
             } else {
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $errors['username'] = 'No se ha podido realizar el guardado';
+                $mensaje = new Mensaje('No se ha podido guardar el usuario', Mensaje::ERROR, 'Error');
+                $this->addFlashMessage($mensaje);
                 $this->showNewUsuario($input, $errors);
             }
         } else {
@@ -352,16 +362,19 @@ class UsuarioController extends BaseController
             $insertData = $_POST;
             $insertData['activo'] = isset($insertData['activo']) ? 1 : 0;
             foreach ($insertData as $key => $value) {
-                if (empty($value)) {
+                if ($value === '') {
                     $insertData[$key] = null;
                 }
             }
             $model = new UsuarioModel();
             if ($model->updateUsuario($insertData, $username)) {
+                $mensaje = new Mensaje('Usuario modificado correctamente', Mensaje::SUCCESS, 'Éxito');
+                $this->addFlashMessage($mensaje);
                 header('Location: /usuarios-filtro');
             } else {
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $errors['username'] = 'No se ha podido realizar el guardado';
+                $mensaje = new Mensaje('No se ha podido modificar el usuario', Mensaje::ERROR, 'Error');
+                $this->addFlashMessage($mensaje);
                 $this->showEditUsuario($username, $input, $errors);
             }
         } else {
@@ -370,12 +383,15 @@ class UsuarioController extends BaseController
         }
     }
 
-    public function deleteUsuario(string $username): bool
+    public function deleteUsuario(string $username): void
     {
         $model = new UsuarioModel();
         if ($model->deleteUsuario($username)) {
+            $mensaje = new Mensaje('Usuario eliminado correctamente', Mensaje::SUCCESS, 'Éxito');
         } else {
+            $mensaje = new Mensaje('No se ha podido eliminar el usuario', Mensaje::ERROR, 'Error');
         }
+        $this->addFlashMessage($mensaje);
         header('Location: /usuarios-filtro');
     }
 }

@@ -1,3 +1,4 @@
+<!--Inicio HTML -->
 <div class="row">
     <div class="col-12">
         <div class="card shadow mb-4">
@@ -137,8 +138,8 @@
                                 <td><?php echo $usuario['nombre_rol'] ?></td>
                                 <td><?php echo $usuario['country_name'] ?></td>
                                 <td>
-                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/edit/'.$usuario['username']; ?>" class="btn btn-success ml-1" data-toggle="tooltip" data-placement="top" title="Editar usuario"><i class="fas fa-edit"></i></a>
-                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/delete/'.$usuario['username']; ?>" class="btn btn-danger ml-1" data-toggle="tooltip" data-placement="top" title="Borrar usuario" onclick="return confirm('¿Desea borrar al usuario?') == true"><i class="fas fa-trash"></i></a>
+                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/edit/'.$usuario['username']; ?>" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Editar usuario"><i class="fas fa-edit"></i></a>
+                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/delete/'.$usuario['username']; ?>" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Borrar usuario" onclick="return confirm('¿Desea borrar al usuario?') == true"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                             <?php

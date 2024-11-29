@@ -2,14 +2,17 @@
 
 namespace Com\Daw2\Core;
 
+use Com\Daw2\Controllers\CategoriaController;
 use Com\Daw2\Controllers\EjerciciosController;
 use Com\Daw2\Controllers\PreferenciasController;
+use Com\Daw2\Controllers\ProductosController;
 use Steampixel\Route;
 
 class FrontController
 {
     public static function main()
     {
+        session_start();
         Route::add(
             '/usuarios-filtro',
             function () {
@@ -112,6 +115,24 @@ class FrontController
                 $controlador->doPreferencias();
             },
             'post'
+        );
+
+        Route::add(
+            '/categorias',
+            function () {
+                $controlador = new CategoriaController();
+                $controlador->categorias();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/productos',
+            function () {
+                $controlador = new ProductosController();
+                $controlador->productos();
+            },
+            'get'
         );
 
         Route::add(
