@@ -136,6 +136,24 @@ class FrontController
         );
 
         Route::add(
+            '/productos/new',
+            function () {
+                $controlador = new ProductosController();
+                $controlador->showNewProducto();
+            },
+            'get'
+        );
+
+        Route::add(
+            '/productos/new',
+            function () {
+                $controlador = new ProductosController();
+                $controlador->doNewUsuario();
+            },
+            'post'
+        );
+
+        Route::add(
             '/',
             function () {
                 $controlador = new \Com\Daw2\Controllers\InicioController();

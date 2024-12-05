@@ -100,22 +100,70 @@
         <div class="card shadow mb-4">
             <div
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Proveedores</h6>
+                <div class="col-6">
+                    <h6 class="m-0 font-weight-bold text-primary">Productos</h6>
+                </div>
+                <div class="col-6">
+                    <div class="m-0 font-weight-bold justify-content-end">
+                        <a href="<?php echo $_ENV['host.folder'] . 'productos/new'; ?>"
+                           class="btn btn-primary ml-1 float-right"> Nuevo
+                            Producto <i class="fas fa-plus-circle"></i></a>
+                    </div>
+                </div>
             </div>
             <!-- Card Body -->
             <div class="card-body" id="card_table">
                 <!--<form action="./?sec=formulario" method="post">                   -->
+                <?php if (!empty($productos)){ ?>
                 <table id="tabladatos" class="table table-striped datatable">
                     <thead>
                     <tr>
-                        <th><a href="">Código</a></th>
-                        <th><a href="">Nombre</a></th>
-                        <th><a href="">Categoría</a></th>
-                        <th><a href="">Proveedor</a></th>
-                        <th><a href="">Stock</a></th>
-                        <th><a href="">Coste</a></th>
-                        <th><a href="">Margen</a></th>
-                        <th><a href="">PVP</a></th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 1) ? '-' : '') ?>1"><?php if (abs($order) == 1) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Código</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 2) ? '-' : '') ?>2"><?php if (abs($order) == 2) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Nombre</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 3) ? '-' : '') ?>3"><?php if (abs($order) == 3) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Categoría</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 4) ? '-' : '') ?>4"><?php if (abs($order) == 4) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Proveedor</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 5) ? '-' : '') ?>5"><?php if (abs($order) == 5) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Stock</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 6) ? '-' : '') ?>6"><?php if (abs($order) == 6) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Coste</a>
+                        </th>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 7) ? '-' : '') ?>7"><?php if (abs($order) == 7) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                Margen</a>
+                        </th>
+                        <th><a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 8) ? '-' : '') ?>8"><?php if (abs($order) == 8) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
+                                PVP</a></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -137,35 +185,44 @@
             <div class="card-footer">
                 <nav aria-label="Navegacion por paginas">
                     <ul class="pagination justify-content-center">
+                        <?php if($page !== 1){?>
                         <li class="page-item">
-                            <a class="page-link" href="/proveedores?page=1&order=1" aria-label="First">
+                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString?>page=1" aria-label="First">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">First</span>
                             </a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="/proveedores?page=2&order=1" aria-label="Previous">
+                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page-1)?>" aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                                 <span class="sr-only">Previous</span>
                             </a>
                         </li>
+                        <?php }?>
 
-                        <li class="page-item active"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item active"><a class="page-link" href="#"><?php echo $page?></a></li>
+                        <?php if($page !== $maxPage){?>
                         <li class="page-item">
-                            <a class="page-link" href="/proveedores?page=4&order=1" aria-label="Next">
+                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page+1)?>" aria-label="Next">
                                 <span aria-hidden="true">&gt;</span>
                                 <span class="sr-only">Next</span>
                             </a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="/proveedores?page=8&order=1" aria-label="Last">
+                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . $maxPage;?>" aria-label="Last">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Last</span>
                             </a>
                         </li>
+                        <?php }?>
                     </ul>
                 </nav>
             </div>
+            <?php } else { ?>
+                <div class="alert alert-warning" role="alert">
+                    No hay productos que cumplan los requisitos seleccionados
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>
