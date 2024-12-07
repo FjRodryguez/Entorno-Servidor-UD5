@@ -47,10 +47,8 @@ declare(strict_types=1);
                     <div class="form-group">
                         <label for="descipcion">Descripción<span class="text-danger">*</span>:</label>
                         <textarea class="form-control"
-                                  name="descripcion" id="descipcion"
-                                  value="<?php
-                                  echo $input['descripcion'] ?? ''; ?>"
-                                  placeholder="descripción"></textarea>
+                                  name="descripcion" id="descripcion"
+                                  placeholder="descripción"><?php echo $input['descripcion'] ?? '';?></textarea>
                         <p class="text-danger small">
                             <?php
                             echo $errors['descripcion'] ?? '';
@@ -71,7 +69,7 @@ declare(strict_types=1);
                         </select>
                         <p class="text-danger small">
                             <?php
-                            echo $errors['salarioBruto'] ?? '';
+                            echo $errors['proveedor'] ?? '';
                             ?>
                         </p>
                     </div>
@@ -119,16 +117,16 @@ declare(strict_types=1);
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="form-group">
-                        <label for="categoria">Categoria:</label>
-                        <select name="categoria" id="categoria" class="form-control">
+                        <label for="id_categoria">Categoria:</label>
+                        <select name="id_categoria" id="id_categoria" class="form-control">
                             <option value="">-</option>
                             <?php foreach ($categorias as $categoria) {?>
-                            <option value="<?php echo $categoria['id_categoria'];?>" <?php echo (isset($input['categoria']) && $input['categoria'] === $categoria['id_categoria']) ? 'selected' : '' ;?>>
+                            <option value="<?php echo $categoria['id_categoria'];?>" <?php echo (isset($input['id_categoria']) && $input['id_categoria'] === $categoria['id_categoria']) ? 'selected' : '' ;?>>
                                 <?php echo ucfirst($categoria['nombre_categoria'])?>
                             </option>
                             <?php }?>
                         </select>
-                        <p class="text-danger small"><?php echo $errors['categoria'] ?? ''; ?></p>
+                        <p class="text-danger small"><?php echo $errors['id_categoria'] ?? ''; ?></p>
                     </div>
                 </div>
             </div>

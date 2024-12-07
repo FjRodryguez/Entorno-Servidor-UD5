@@ -36,11 +36,18 @@ class ProductosModel extends BaseDbModel
             $stmt = $this->pdo->query($sql);
             return $stmt->fetchAll();
         } else {
-            $sql = self::SELECT_FORM . " WHERE " . implode(" AND ", $condiciones) . " ORDER BY " . self::ORDER_COLUMNS[$order - 1] . " $tipoOrder LIMIT $minFilas, $maxFilas";
+            $sql = self::SELECT_FORM . " WHERE " . implode(" AND ", $condiciones) . " ORDER BY " . self::ORDER_COLUMNS[$order - 1] . " $tipoOrder LIMIT $offset, $pageSize";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($filtros);
             return $stmt->fetchAll();
         }
+    }
+
+    public function addProducto($producto)
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO producto (codigo, nombre, descripcion, proveedor, coste, margen, stock, iva, id_categoria) 
+                    values (:codigo, :nombre, :descripcion, :proveedor, :coste, :margen, :stock, :iva, :id_categoria)');
+        return $stmt->execute($producto);
     }
 
     public function countProductos($filtros): int
@@ -65,6 +72,17 @@ class ProductosModel extends BaseDbModel
             $pageSize = $_ENV['usuarios.rows_per_page'];
         }
         return ($page - 1) * $pageSize;
+    }
+
+    public function findByCodigo(string $codigo) : ?array
+    {
+        $stmt = $this->pdo->prepare(self::SELECT_FORM . " WHERE codigo = :codigo");
+        $stmt->execute(['codigo' => $codigo]);
+        if($row = $stmt->fetch()){
+            return $row;
+        }else{
+            return null;
+        }
     }
 
     private function getCondiciones($filtros): array

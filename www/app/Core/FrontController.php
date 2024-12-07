@@ -148,9 +148,18 @@ class FrontController
             '/productos/new',
             function () {
                 $controlador = new ProductosController();
-                $controlador->doNewUsuario();
+                $controlador->doNewProducto();
             },
             'post'
+        );
+
+        Route::add(
+            '/productos/edit/(/^[a-zA-Z]{3}\d{7}$/)',
+            function ($producto) {
+                $controlador = new ProductosController();
+                $controlador->showEditProducto($producto);
+            },
+            'get'
         );
 
         Route::add(

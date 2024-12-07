@@ -31,4 +31,14 @@ class CategoriaModel extends BaseDbModel
         }
         return $res;
     }
+
+    public function getCategoria(int $idCategoria) : ?array{
+        $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_categoria = :idCategoria");
+        $stmt->execute([':idCategoria' => $idCategoria]);
+        if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            return $row;
+        }else{
+            return null;
+        }
+    }
 }

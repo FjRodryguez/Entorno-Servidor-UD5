@@ -10,6 +10,7 @@ use Com\Daw2\Models\UsuarioModel;
 use Decimal\Decimal;
 use Com\Daw2\Core\BaseController;
 use Com\Daw2\Models\ProductosModel;
+use http\Encoding\Stream\Debrotli;
 
 class ProductosController extends BaseController
 {
@@ -120,24 +121,22 @@ class ProductosController extends BaseController
         return (int)ceil($registros / $pageSize);
     }
 
-    public function showNewProducto()
+    public function showNewProducto($input = [], $errors = [])
     {
-        $data = [
+        $data = $this->getCommonData();
+        $data += [
             'titulo' => 'Inserción producto',
             'breadcrumb' => ['Formulario', 'Ingresar producto']
         ];
 
-        $proveedorModel = new ProveedorModel();
-        $data['proveedores'] = $proveedorModel->getAll();
-        $categoriaModel = new CategoriaModel();
-        $data['categorias'] = $categoriaModel->getAllCategorias();
-
+        $data['input'] = $input;
+        $data['errors'] = $errors;
         $this->view->showViews(
             array('templates/header.view.php', 'productos.form.view.php', 'templates/footer.view.php'),
             $data);
     }
 
-    public function doNewUsuario()
+    public function doNewProducto()
     {
         $data = [
             'titulo' => 'Inserción producto',
@@ -147,14 +146,44 @@ class ProductosController extends BaseController
         $errors = $this->checkForm($_POST);
 
         if (empty($errors)) {
-
+            $insertData = $_POST;
+            foreach ($insertData as $key => $value) {
+                if($value === ''){
+                    $insertData[$key] = null;
+                }
+            }
+            $productoModel = new ProductosModel();
+            if($productoModel->addProducto($insertData)){
+                header('Location: /productos');
+            }else{
+                $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $this->showNewProducto($input, $errors);
+            }
         } else {
-            $data['errors'] = $errors;
-            $data['input'] = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $this->view->showViews(
-                array('templates/header.view.php', 'productos.form.view.php', 'templates/footer.view.php'),
-                $data);
+            $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $this->showNewProducto($input, $errors);
         }
+    }
+
+    public function showEditProducto($producto, $input = [], $errors = [])
+    {
+        $productoModel = new ProductosModel();
+        $productoData = $productoModel->findByCodigo($producto);
+        if(is_null($productoData)){
+            header('Location: /productos');
+        }
+        $data = $this->getCommonData();
+        $data += [
+            'titulo' => 'Editar producto',
+            'breadcrumb' => ['Formulario', 'Editar producto'],
+        ];
+
+        $data['input'] = ($input === []) ? $producto : $input;
+
+        $data['errors'] = $errors;
+        $this->view->showViews(
+            array('templates/header.view.php', 'productos.form.view.php', 'templates/footer.view.php'),
+            $data);
     }
 
     private function checkForm($data): array
@@ -175,6 +204,68 @@ class ProductosController extends BaseController
             $errors['nombre'] = "El nombre debe estar formado por abc - abc, donde abc pueden ser números o letras";
         }
 
+        if(empty($data['descripcion'])){
+            $errors['descripcion'] = "La descripcion es obligatoria";
+        }elseif(mb_strlen($data['descripcion']) > 255){
+            $errors['descripcion'] = "La descripcion no puede tener mas 255 caracteres";
+        }
+
+        if(isset($data['id_categoria']) && filter_var($data['id_categoria'], FILTER_VALIDATE_INT) === false){
+            $errors['id_categoria'] = "La categoría no es válida";
+        }else{
+            $categoriaModel = new CategoriaModel();
+            $categoria = $categoriaModel->getCategoria((int) $data['id_categoria']);
+            if(is_null($categoria)){
+                $errors['id_categoria'] = "La categoria no es válida";
+            }
+        }
+
+        if(empty($data['proveedor'])){
+            $errors['proveedor'] = "El proveedor es obligatorio";
+        }elseif (!preg_match('/^[A-Z][0-9]{7}[A-Z]$/', $data['proveedor'])) {
+            $errors['proveedor'] = "Proveedor no válido";
+        }else{
+            $proveedorModel = new ProveedorModel();
+            $proveedor = $proveedorModel-> findByCif($data['proveedor']);
+            if(is_null($proveedor)){
+                $errors['proveedor'] = "El proveedor no es válido";
+            }
+        }
+
+        if(empty($data['coste'])){
+            $errors['coste'] = "El coste es obligatorio";
+        }elseif (filter_var($data['coste'], FILTER_VALIDATE_INT) === false){
+            $errors['coste'] = "El coste no es válido";
+        }
+
+        if(empty($data['margen'])){
+            $errors['margen'] = "El margen es obligatorio";
+        }elseif(filter_var($data['margen'], FILTER_VALIDATE_INT) === false){
+            $errors ['margen'] = "El margen debe ser un número entero";
+        }
+
+        if(empty($data['stock'])){
+            $errors['stock'] = "El stock es obligatorio";
+        }elseif (filter_var($data['stock'], FILTER_VALIDATE_INT) === false){
+            $errors['stock'] = "El stock debe ser un número entero";
+        }
+
+        if(empty($data['iva'])){
+            $errors['iva'] = "El iva es obligatorio";
+        }elseif (filter_var($data['iva'], FILTER_VALIDATE_INT) === false){
+            $errors['iva'] = "El iva debe ser un número entero";
+        }elseif($data['iva'] > 100){
+            $errors['iva'] = "El iva no puede ser mayor a 100";
+        }
         return $errors;
+    }
+
+    private function getCommonData(): array
+    {
+        $proveedorModel = new ProveedorModel();
+        $data['proveedores'] = $proveedorModel->getAll();
+        $categoriaModel = new CategoriaModel();
+        $data['categorias'] = $categoriaModel->getAllCategorias();
+        return $data;
     }
 }
