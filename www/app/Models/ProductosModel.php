@@ -23,19 +23,19 @@ class ProductosModel extends BaseDbModel
 
     public function filtrarProductos($filtros, $order, int $page = 1, int $pageSize = -1)
     {
-        $condiciones = $this->getCondiciones($filtros);
         if($pageSize < 0){
             $pageSize = (int)$_ENV['usuarios.rows_per_page'];
         }
-        $offset = self::getOffset($page, $pageSize);
 
         $tipoOrder = ($order < 0) ? 'DESC' : 'ASC';
         $order = abs($order);
+        $offset = self::getOffset($page, $pageSize);
         if (empty($filtros)) {
             $sql = self::SELECT_FORM . " ORDER BY " . self::ORDER_COLUMNS[$order - 1] . " $tipoOrder LIMIT $offset, $pageSize";
             $stmt = $this->pdo->query($sql);
             return $stmt->fetchAll();
         } else {
+            $condiciones = $this->getCondiciones($filtros);
             $sql = self::SELECT_FORM . " WHERE " . implode(" AND ", $condiciones) . " ORDER BY " . self::ORDER_COLUMNS[$order - 1] . " $tipoOrder LIMIT $offset, $pageSize";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($filtros);

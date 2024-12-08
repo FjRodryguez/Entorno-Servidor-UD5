@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Com\Daw2\Controllers;
 
+use Com\Daw2\Libraries\Mensaje;
 use Com\Daw2\Models\CategoriaModel;
 use Com\Daw2\Models\ProveedorModel;
 use Com\Daw2\Models\UsuarioModel;
@@ -14,7 +15,6 @@ use http\Encoding\Stream\Debrotli;
 
 class ProductosController extends BaseController
 {
-
     public const ORDER_DEFECTO = 1;
 
     public function productos()
@@ -23,6 +23,12 @@ class ProductosController extends BaseController
             'titulo' => 'Productos',
             'breadcrumb' => ['Listado', 'Productos']
         ];
+
+        if (isset($_SESSION['flash']['message'])) {
+            $data['message'] = $_SESSION['flash']['message'];
+            $data['message_type'] = $_SESSION['flash']['message_type'] ?? 'info';
+            unset($_SESSION['flash']);
+        }
 
         $categoriaModel = new CategoriaModel();
         $data['categorias'] = $categoriaModel->getAllCategorias();
@@ -62,19 +68,19 @@ class ProductosController extends BaseController
         $copia_GET = $_GET;
         unset($copia_GET['page']);
         $data['queryStringNoPage'] = http_build_query($copia_GET);
-        if (!empty($copia_GET)) {
+        if (!empty($data['queryStringNoPage'])) {
             $data['queryStringNoPage'] .= '&';
         }
 
         unset($copia_GET['order']);
         $data['queryString'] = http_build_query($copia_GET);
-        if (!empty($copia_GET)) {
+        if (!empty($data['queryString'])) {
             $data['queryString'] .= '&';
         }
 
         $productosModel = new ProductosModel();
         $registros = $productosModel->countProductos($filtros);
-        $page = isset($_GET['page']) && filter_var($_GET['page'], FILTER_VALIDATE_INT) ?
+        $page = isset($_GET['page']) && filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?
             $this->getPage((int)$_GET['page'], $registros) : 1;
         $data['page'] = $page;
         $data['maxPage'] = $this->getMaxPage($registros);
@@ -154,8 +160,12 @@ class ProductosController extends BaseController
             }
             $productoModel = new ProductosModel();
             if($productoModel->addProducto($insertData)){
+                $mensaje = new Mensaje('Producto creado correctamente', Mensaje::SUCCESS, 'Éxito');
+                $this->addFlashMessage($mensaje);
                 header('Location: /productos');
             }else{
+                $mensaje = new Mensaje('No se ha podido crear el producto', Mensaje::SUCCESS, 'Éxito');
+                $this->addFlashMessage($mensaje);
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 $this->showNewProducto($input, $errors);
             }
@@ -203,8 +213,12 @@ class ProductosController extends BaseController
                     $insertData[$key] = null;
                 }
                 if($productoModel->editProducto($insertData, $producto)){
+                    $mensaje = new Mensaje('Producto modificado correctamente', Mensaje::SUCCESS, 'Éxito');
+                    $this->addFlashMessage($mensaje);
                     header('Location: /productos');
                 }else{
+                    $mensaje = new Mensaje('No se ha podido modificar el producto', Mensaje::SUCCESS, 'Éxito');
+                    $this->addFlashMessage($mensaje);
                     $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $this->showEditProducto($producto, $input, $errors);
                 }
@@ -219,8 +233,12 @@ class ProductosController extends BaseController
     {
         $productoModel = new ProductosModel();
         if($productoModel->deleteProducto($producto)){
-            header('Location: /productos');
+            $mensaje = new Mensaje('Producto eliminado correctamente', Mensaje::SUCCESS, 'Éxito');
+        } else {
+            $mensaje = new Mensaje('No se ha podido eliminar el producto', Mensaje::ERROR, 'Error');
         }
+        $this->addFlashMessage($mensaje);
+        header('Location: /productos');
     }
 
     private function checkForm($data, $oldCodigo = ''): array

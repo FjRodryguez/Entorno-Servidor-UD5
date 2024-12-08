@@ -3,7 +3,7 @@
     <div class="col-12">
         <div class="card shadow mb-4">
             <form method="get" action="">
-                <input type="hidden" name="order" value="1"/>
+                <input type="hidden" name="order" value="<?php echo $order; ?>"/>
                 <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
