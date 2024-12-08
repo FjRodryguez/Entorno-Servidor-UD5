@@ -154,10 +154,28 @@ class FrontController
         );
 
         Route::add(
-            '/productos/edit/(/^[a-zA-Z]{3}\d{7}$/)',
+            '/productos/edit/([a-zA-Z]{3}\d{7})',
             function ($producto) {
                 $controlador = new ProductosController();
                 $controlador->showEditProducto($producto);
+            },
+            'get'
+        );
+
+        Route::add(
+            '/productos/edit/([a-zA-Z]{3}\d{7})',
+            function ($producto) {
+                $controlador = new ProductosController();
+                $controlador->doEditProducto($producto);
+            },
+            'post'
+        );
+
+        Route::add(
+            '/productos/delete/([a-zA-Z]{3}\d{7})',
+            function ($producto) {
+                $controlador = new ProductosController();
+                $controlador->doDeleteProducto($producto);
             },
             'get'
         );

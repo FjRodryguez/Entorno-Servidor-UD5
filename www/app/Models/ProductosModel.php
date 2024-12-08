@@ -43,11 +43,24 @@ class ProductosModel extends BaseDbModel
         }
     }
 
-    public function addProducto($producto)
+    public function addProducto(array $producto)
     {
         $stmt = $this->pdo->prepare('INSERT INTO producto (codigo, nombre, descripcion, proveedor, coste, margen, stock, iva, id_categoria) 
                     values (:codigo, :nombre, :descripcion, :proveedor, :coste, :margen, :stock, :iva, :id_categoria)');
         return $stmt->execute($producto);
+    }
+
+    public function editProducto(array $producto, string $oldCodigo)
+    {
+        $stmt = $this->pdo->prepare('UPDATE producto SET codigo=:codigo, nombre=:nombre, descripcion=:descripcion, proveedor=:proveedor, coste=:coste, margen=:margen, stock=:stock, iva=:iva, id_categoria=:id_categoria WHERE codigo = :oldCodigo');
+        $producto['oldCodigo'] = $oldCodigo;
+        return $stmt->execute($producto);
+    }
+
+    public function deleteProducto($codigo)
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM producto WHERE codigo = :codigo');
+        return $stmt->execute(['codigo' => $codigo]);
     }
 
     public function countProductos($filtros): int
@@ -76,7 +89,7 @@ class ProductosModel extends BaseDbModel
 
     public function findByCodigo(string $codigo) : ?array
     {
-        $stmt = $this->pdo->prepare(self::SELECT_FORM . " WHERE codigo = :codigo");
+        $stmt = $this->pdo->prepare(self::SELECT_FORM . " WHERE p.codigo = :codigo");
         $stmt->execute(['codigo' => $codigo]);
         if($row = $stmt->fetch()){
             return $row;

@@ -165,6 +165,7 @@
                                         class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
                                 PVP</a></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -178,7 +179,8 @@
                             <td><?php echo number_format($producto['coste'], 2, ',', '.'); ?></td>
                             <td><?php echo number_format($producto['margen'], 2, ',', '.'); ?></td>
                             <td><?php echo str_replace([',', '.', '_'], ['_', ',', '.'], $producto['pvp']) ?></td>
-                            <td><a href="<?php echo $_ENV['host.folder'] . 'productos/edit/' . $producto['codigo'];?>" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Editar usuario"><i class="fas fa-edit"></i></a></td>
+                            <td><a href="<?php echo $_ENV['host.folder'] . 'productos/edit/' . $producto['codigo'];?>" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Editar producto"><i class="fas fa-edit"></i></a></td>
+                            <td><a href="<?php echo $_ENV['host.folder'] . 'productos/delete/' . $producto['codigo'];?>" class="btn btn-danger" data-toggle="tooltipo" data-placement="top" title="Borrar producto" onclick="return confirm('Desea borrar el producto?') == true"><i class="fas fa-trash"></i></a></td>
                         </tr>
                     <?php } ?>
                     </tbody>

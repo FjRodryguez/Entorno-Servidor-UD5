@@ -165,10 +165,11 @@ class ProductosController extends BaseController
         }
     }
 
-    public function showEditProducto($producto, $input = [], $errors = [])
+    public function showEditProducto(string $producto, array $input = [], array $errors = [])
     {
         $productoModel = new ProductosModel();
         $productoData = $productoModel->findByCodigo($producto);
+        echo $producto;
         if(is_null($productoData)){
             header('Location: /productos');
         }
@@ -178,22 +179,64 @@ class ProductosController extends BaseController
             'breadcrumb' => ['Formulario', 'Editar producto'],
         ];
 
-        $data['input'] = ($input === []) ? $producto : $input;
+        $data['input'] = ($input === []) ? $productoData : $input;
 
         $data['errors'] = $errors;
+
         $this->view->showViews(
             array('templates/header.view.php', 'productos.form.view.php', 'templates/footer.view.php'),
             $data);
     }
 
-    private function checkForm($data): array
+    public function doEditProducto(string $producto)
+    {
+        $productoModel = new ProductosModel();
+        $productoData = $productoModel->findByCodigo($producto);
+        if(is_null($productoData)){
+            header('Location: /productos');
+        }
+        $errors = $this->checkForm($_POST, $producto);
+        if (empty($errors)) {
+            $insertData = $_POST;
+            foreach ($insertData as $key => $value) {
+                if($value === ''){
+                    $insertData[$key] = null;
+                }
+                if($productoModel->editProducto($insertData, $producto)){
+                    header('Location: /productos');
+                }else{
+                    $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    $this->showEditProducto($producto, $input, $errors);
+                }
+            }
+        }else{
+            $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $this->showEditProducto($producto, $input, $errors);
+        }
+    }
+
+    public function doDeleteProducto($producto)
+    {
+        $productoModel = new ProductosModel();
+        if($productoModel->deleteProducto($producto)){
+            header('Location: /productos');
+        }
+    }
+
+    private function checkForm($data, $oldCodigo = ''): array
     {
         $errors = [];
 
-        if (empty($data['codigo'])) {
-            $errors['codigo'] = "El codigo es obligatorio";
-        } elseif (!preg_match('/^[a-zA-Z]{3}\d{7}$/', $data['codigo'])) {
-            $errors['codigo'] = "El código debe estar formado por 3 letras y 7 números sin espacios";
+        if($oldCodigo === '' || $oldCodigo != $data['codigo']) {
+            if (empty($data['codigo'])) {
+                $errors['codigo'] = "El codigo es obligatorio";
+            } elseif (!preg_match('/^[a-zA-Z]{3}\d{7}$/', $data['codigo'])) {
+                $errors['codigo'] = "El código debe estar formado por 3 letras y 7 números sin espacios";
+            }
+            $productoModel = new ProductosModel();
+            if (!is_null($productoModel->findByCodigo($data['codigo']))) {
+                $errors['codigo'] = "El codigo ya existe";
+            }
         }
 
         if (empty($data['nombre'])) {
@@ -244,7 +287,7 @@ class ProductosController extends BaseController
             $errors ['margen'] = "El margen debe ser un número entero";
         }
 
-        if(empty($data['stock'])){
+        if($data['stock'] === ''){
             $errors['stock'] = "El stock es obligatorio";
         }elseif (filter_var($data['stock'], FILTER_VALIDATE_INT) === false){
             $errors['stock'] = "El stock debe ser un número entero";
