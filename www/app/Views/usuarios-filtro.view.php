@@ -43,10 +43,12 @@
                                 <label for="salario_min">Salario:</label>
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="text" class="form-control" name="min_salar" id="min_salar" value="<?php echo $input['min_salar'] ?? ''; ?>" placeholder="Mínimo" />
+                                        <input type="text" class="form-control" name="min_salar" id="min_salar"
+                                               value="<?php echo $input['min_salar'] ?? ''; ?>" placeholder="Mínimo"/>
                                     </div>
                                     <div class="col-6">
-                                        <input type="text" class="form-control" name="max_salar" id="max_salar" value="<?php echo $input['max_salar'] ?? ''; ?>" placeholder="Máximo" />
+                                        <input type="text" class="form-control" name="max_salar" id="max_salar"
+                                               value="<?php echo $input['max_salar'] ?? ''; ?>" placeholder="Máximo"/>
                                     </div>
                                 </div>
                             </div>
@@ -57,10 +59,14 @@
                                 <label for="retencion_min">Retención:</label>
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="text" class="form-control" name="min_retencion" id="min_retencion" value="<?php echo $input['min_retencion'] ?? ''; ?>" placeholder="Mínimo" />
+                                        <input type="text" class="form-control" name="min_retencion" id="min_retencion"
+                                               value="<?php echo $input['min_retencion'] ?? ''; ?>"
+                                               placeholder="Mínimo"/>
                                     </div>
                                     <div class="col-6">
-                                        <input type="text" class="form-control" name="max_retencion" id="max_retencion" value="<?php echo $input['max_retencion'] ?? ''; ?>" placeholder="Máximo" />
+                                        <input type="text" class="form-control" name="max_retencion" id="max_retencion"
+                                               value="<?php echo $input['max_retencion'] ?? ''; ?>"
+                                               placeholder="Máximo"/>
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +74,8 @@
                         <div class="col-12 col-lg-3">
                             <div class="form-group">
                                 <label for="id_country">Tipo:</label>
-                                <select name="id_country[]" id="id_country" class="form-control select2" data-placeholder="Países" multiple>
+                                <select name="id_country[]" id="id_country" class="form-control select2"
+                                        data-placeholder="Países" multiple>
                                     <?php
                                     foreach ($countries as $country) {
                                         ?>
@@ -85,7 +92,8 @@
                 </div>
                 <div class="card-footer">
                     <div class="col-12 text-right">
-                        <a href="<?php echo $_ENV['host.folder']; ?>usuarios-filtro" value="" name="reiniciar" class="btn btn-danger">Reiniciar filtros</a>
+                        <a href="<?php echo $_ENV['host.folder']; ?>usuarios-filtro" value="" name="reiniciar"
+                           class="btn btn-danger">Reiniciar filtros</a>
                         <input type="submit" value="Aplicar filtros" class="btn btn-primary ml-2"/>
                     </div>
                 </div>
@@ -103,13 +111,15 @@
                         <h6 class="m-0 install font-weight-bold text-primary">
                             Usuarios</h6>
                     </div>
-                    <div class="col-6">
-                        <div class="m-0 font-weight-bold justify-content-end">
-                            <a href="<?php echo $_ENV['host.folder'].'usuarios/new'; ?>"
-                               class="btn btn-primary ml-1 float-right"> Nuevo
-                                Usuario <i class="fas fa-plus-circle"></i></a>
+                    <?php if (str_contains($_SESSION['permisos']['usuarios'], 'w')) { ?>
+                        <div class="col-6">
+                            <div class="m-0 font-weight-bold justify-content-end">
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios/new'; ?>"
+                                   class="btn btn-primary ml-1 float-right"> Nuevo
+                                    Usuario <i class="fas fa-plus-circle"></i></a>
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body" id="card_table">
@@ -117,12 +127,36 @@
                     <table id="tabladatos" class="table table-striped datatable">
                         <thead>
                         <tr>
-                            <th><a href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryString.'order='.(($order == 1) ? '-' : ''); ?>1">Nombre de usuario</a> <?php if (abs($order) == 1) { ?><i class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?></th>
-                            <th><a href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryString.'order='.(($order == 2) ? '-' : ''); ?>2">Salario bruto</a> <?php if (abs($order) == 2) { ?><i class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?></th></th>
-                            <th><a href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryString.'order='.(($order == 3) ? '-' : ''); ?>3">Retención IRPF</a> <?php if (abs($order) == 3) { ?><i class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?></th></th>
+                            <th>
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryString . 'order=' . (($order == 1) ? '-' : ''); ?>1">Nombre
+                                    de usuario</a> <?php if (abs($order) == 1) { ?><i
+                                    class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?>
+                            </th>
+                            <th>
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryString . 'order=' . (($order == 2) ? '-' : ''); ?>2">Salario
+                                    bruto</a> <?php if (abs($order) == 2) { ?><i
+                                    class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?>
+                            </th>
+                            </th>
+                            <th>
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryString . 'order=' . (($order == 3) ? '-' : ''); ?>3">Retención
+                                    IRPF</a> <?php if (abs($order) == 3) { ?><i
+                                    class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?>
+                            </th>
+                            </th>
                             <th>Salario Neto</th>
-                            <th><a href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryString.'order='.(($order == 4) ? '-' : ''); ?>4">Rol</a> <?php if (abs($order) == 4) { ?><i class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?></th></th>
-                            <th><a href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryString.'order='.(($order == 5) ? '-' : ''); ?>5">Nacionalidad</a> <?php if (abs($order) == 5) { ?><i class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?></th></th>
+                            <th>
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryString . 'order=' . (($order == 4) ? '-' : ''); ?>4">Rol</a> <?php if (abs($order) == 4) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?>
+                            </th>
+                            </th>
+                            <th>
+                                <a href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryString . 'order=' . (($order == 5) ? '-' : ''); ?>5">Nacionalidad</a> <?php if (abs($order) == 5) { ?>
+                                <i
+                                        class="fas fa-sort-amount-<?php echo $order < 0 ? 'up' : 'down'; ?>-alt"></i><?php } ?>
+                            </th>
+                            </th>
                             <th></th>
                         </tr>
                         </thead>
@@ -133,14 +167,26 @@
                             <tr class="<?php echo !$usuario['activo'] ? 'table-danger' : ''; ?>">
                                 <td><?php echo $usuario['username'] ?></td>
                                 <td><?php echo !empty($usuario['salarioBruto']) ? number_format($usuario['salarioBruto'], 2, ',', '.') : '-'; ?></td>
-                                <td><?php echo !empty($usuario['retencionIRPF']) ? number_format($usuario['retencionIRPF'], 2).'%' : '-' ?></td>
+                                <td><?php echo !empty($usuario['retencionIRPF']) ? number_format($usuario['retencionIRPF'], 2) . '%' : '-' ?></td>
                                 <td><?php echo !empty($usuario['salarioNeto']) ? str_replace([',', '.', '_'], ['_', ',', '.'], $usuario['salarioNeto']) : '-'; ?></td>
                                 <td><?php echo $usuario['nombre_rol'] ?></td>
                                 <td><?php echo $usuario['country_name'] ?></td>
-                                <td>
-                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/edit/'.$usuario['username']; ?>" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Editar usuario"><i class="fas fa-edit"></i></a>
-                                    <a href="<?php echo $_ENV['host.folder'].'usuarios/delete/'.$usuario['username']; ?>" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Borrar usuario" onclick="return confirm('¿Desea borrar al usuario?') == true"><i class="fas fa-trash"></i></a>
-                                </td>
+                                <?php if (str_contains($_SESSION['permisos']['usuarios'], 'w')) { ?>
+                                    <td>
+                                        <a href="<?php echo $_ENV['host.folder'] . 'usuarios/edit/' . $usuario['username']; ?>"
+                                           class="btn btn-success" data-toggle="tooltip" data-placement="top"
+                                           title="Editar usuario"><i class="fas fa-edit"></i></a>
+                                    </td>
+                                <?php } ?>
+                                <?php if (str_contains($_SESSION['permisos']['usuarios'], 'd')) { ?>
+                                    <td>
+                                        <a href="<?php echo $_ENV['host.folder'] . 'usuarios/delete/' . $usuario['username']; ?>"
+                                           class="btn btn-danger" data-toggle="tooltip" data-placement="top"
+                                           title="Borrar usuario"
+                                           onclick="return confirm('¿Desea borrar al usuario?') == true"><i
+                                                    class="fas fa-trash"></i></a>
+                                    </td>
+                                <?php } ?>
                             </tr>
                             <?php
                         }
@@ -152,16 +198,20 @@
                     <nav aria-label="Navegacion por paginas">
                         <ul class="pagination justify-content-center">
                             <?php
-                            if ($page > 1){
+                            if ($page > 1) {
                                 ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryStringNoPage; ?>page=1" aria-label="First">
+                                    <a class="page-link"
+                                       href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryStringNoPage; ?>page=1"
+                                       aria-label="First">
                                         <span aria-hidden="true">&laquo;</span>
                                         <span class="sr-only">First</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'.$queryStringNoPage; ?>page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                    <a class="page-link"
+                                       href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryStringNoPage; ?>page=<?php echo $page - 1; ?>"
+                                       aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                         <span class="sr-only">Previous</span>
                                     </a>
@@ -171,16 +221,20 @@
                             ?>
                             <li class="page-item active"><a class="page-link" href="#"><?php echo $page; ?></a></li>
                             <?php
-                            if ($page < $maxPage){
+                            if ($page < $maxPage) {
                                 ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'. $queryStringNoPage; ?>page=<?php echo $page + 1; ?>" aria-label="Next">
+                                    <a class="page-link"
+                                       href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryStringNoPage; ?>page=<?php echo $page + 1; ?>"
+                                       aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                         <span class="sr-only">Next</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="<?php echo $_ENV['host.folder'].'usuarios-filtro?'. $queryStringNoPage; ?>page=<?php echo $maxPage; ?>" aria-label="Last">
+                                    <a class="page-link"
+                                       href="<?php echo $_ENV['host.folder'] . 'usuarios-filtro?' . $queryStringNoPage; ?>page=<?php echo $maxPage; ?>"
+                                       aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         <span class="sr-only">Last</span>
                                     </a>

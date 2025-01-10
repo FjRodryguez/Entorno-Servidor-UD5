@@ -65,15 +65,15 @@ class ProductosController extends BaseController
         $order = $this->getOrderColumn();
         $data['order'] = $order;
 
-        $copia_GET = $_GET;
-        unset($copia_GET['page']);
-        $data['queryStringNoPage'] = http_build_query($copia_GET);
+        $_copiaGET = $_GET;
+        unset($_copiaGET['page']);
+        $data['queryStringNoPage'] = http_build_query($_copiaGET);
         if (!empty($data['queryStringNoPage'])) {
             $data['queryStringNoPage'] .= '&';
         }
 
-        unset($copia_GET['order']);
-        $data['queryString'] = http_build_query($copia_GET);
+        unset($_copiaGET['order']);
+        $data['queryString'] = http_build_query($_copiaGET);
         if (!empty($data['queryString'])) {
             $data['queryString'] .= '&';
         }
@@ -144,26 +144,21 @@ class ProductosController extends BaseController
 
     public function doNewProducto()
     {
-        $data = [
-            'titulo' => 'Inserción producto',
-            'breadcrumb' => ['Formulario', 'Ingresar producto']
-        ];
-
         $errors = $this->checkForm($_POST);
 
         if (empty($errors)) {
             $insertData = $_POST;
             foreach ($insertData as $key => $value) {
-                if($value === ''){
+                if ($value === '') {
                     $insertData[$key] = null;
                 }
             }
             $productoModel = new ProductosModel();
-            if($productoModel->addProducto($insertData)){
+            if ($productoModel->addProducto($insertData)) {
                 $mensaje = new Mensaje('Producto creado correctamente', Mensaje::SUCCESS, 'Éxito');
                 $this->addFlashMessage($mensaje);
                 header('Location: /productos');
-            }else{
+            } else {
                 $mensaje = new Mensaje('No se ha podido crear el producto', Mensaje::SUCCESS, 'Éxito');
                 $this->addFlashMessage($mensaje);
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -180,7 +175,7 @@ class ProductosController extends BaseController
         $productoModel = new ProductosModel();
         $productoData = $productoModel->findByCodigo($producto);
         echo $producto;
-        if(is_null($productoData)){
+        if (is_null($productoData)) {
             header('Location: /productos');
         }
         $data = $this->getCommonData();
@@ -202,28 +197,28 @@ class ProductosController extends BaseController
     {
         $productoModel = new ProductosModel();
         $productoData = $productoModel->findByCodigo($producto);
-        if(is_null($productoData)){
+        if (is_null($productoData)) {
             header('Location: /productos');
         }
         $errors = $this->checkForm($_POST, $producto);
         if (empty($errors)) {
             $insertData = $_POST;
             foreach ($insertData as $key => $value) {
-                if($value === ''){
+                if ($value === '') {
                     $insertData[$key] = null;
                 }
-                if($productoModel->editProducto($insertData, $producto)){
+                if ($productoModel->editProducto($insertData, $producto)) {
                     $mensaje = new Mensaje('Producto modificado correctamente', Mensaje::SUCCESS, 'Éxito');
                     $this->addFlashMessage($mensaje);
                     header('Location: /productos');
-                }else{
+                } else {
                     $mensaje = new Mensaje('No se ha podido modificar el producto', Mensaje::SUCCESS, 'Éxito');
                     $this->addFlashMessage($mensaje);
                     $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                     $this->showEditProducto($producto, $input, $errors);
                 }
             }
-        }else{
+        } else {
             $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $this->showEditProducto($producto, $input, $errors);
         }
@@ -232,7 +227,7 @@ class ProductosController extends BaseController
     public function doDeleteProducto($producto)
     {
         $productoModel = new ProductosModel();
-        if($productoModel->deleteProducto($producto)){
+        if ($productoModel->deleteProducto($producto)) {
             $mensaje = new Mensaje('Producto eliminado correctamente', Mensaje::SUCCESS, 'Éxito');
         } else {
             $mensaje = new Mensaje('No se ha podido eliminar el producto', Mensaje::ERROR, 'Error');
@@ -245,7 +240,7 @@ class ProductosController extends BaseController
     {
         $errors = [];
 
-        if($oldCodigo === '' || $oldCodigo != $data['codigo']) {
+        if ($oldCodigo === '' || $oldCodigo != $data['codigo']) {
             if (empty($data['codigo'])) {
                 $errors['codigo'] = "El codigo es obligatorio";
             } elseif (!preg_match('/^[a-zA-Z]{3}\d{7}$/', $data['codigo'])) {
@@ -265,57 +260,57 @@ class ProductosController extends BaseController
             $errors['nombre'] = "El nombre debe estar formado por abc - abc, donde abc pueden ser números o letras";
         }
 
-        if(empty($data['descripcion'])){
+        if (empty($data['descripcion'])) {
             $errors['descripcion'] = "La descripcion es obligatoria";
-        }elseif(mb_strlen($data['descripcion']) > 255){
+        } elseif (mb_strlen($data['descripcion']) > 255) {
             $errors['descripcion'] = "La descripcion no puede tener mas 255 caracteres";
         }
 
-        if(isset($data['id_categoria']) && filter_var($data['id_categoria'], FILTER_VALIDATE_INT) === false){
+        if (isset($data['id_categoria']) && filter_var($data['id_categoria'], FILTER_VALIDATE_INT) === false) {
             $errors['id_categoria'] = "La categoría no es válida";
-        }else{
+        } else {
             $categoriaModel = new CategoriaModel();
-            $categoria = $categoriaModel->getCategoria((int) $data['id_categoria']);
-            if(is_null($categoria)){
+            $categoria = $categoriaModel->getCategoria((int)$data['id_categoria']);
+            if (is_null($categoria)) {
                 $errors['id_categoria'] = "La categoria no es válida";
             }
         }
 
-        if(empty($data['proveedor'])){
+        if (empty($data['proveedor'])) {
             $errors['proveedor'] = "El proveedor es obligatorio";
-        }elseif (!preg_match('/^[A-Z][0-9]{7}[A-Z]$/', $data['proveedor'])) {
+        } elseif (!preg_match('/^[A-Z][0-9]{7}[A-Z]$/', $data['proveedor'])) {
             $errors['proveedor'] = "Proveedor no válido";
-        }else{
+        } else {
             $proveedorModel = new ProveedorModel();
-            $proveedor = $proveedorModel-> findByCif($data['proveedor']);
-            if(is_null($proveedor)){
+            $proveedor = $proveedorModel->findByCif($data['proveedor']);
+            if (is_null($proveedor)) {
                 $errors['proveedor'] = "El proveedor no es válido";
             }
         }
 
-        if(empty($data['coste'])){
+        if (empty($data['coste'])) {
             $errors['coste'] = "El coste es obligatorio";
-        }elseif (filter_var($data['coste'], FILTER_VALIDATE_INT) === false){
+        } elseif (filter_var($data['coste'], FILTER_VALIDATE_INT) === false) {
             $errors['coste'] = "El coste no es válido";
         }
 
-        if(empty($data['margen'])){
+        if (empty($data['margen'])) {
             $errors['margen'] = "El margen es obligatorio";
-        }elseif(filter_var($data['margen'], FILTER_VALIDATE_INT) === false){
+        } elseif (filter_var($data['margen'], FILTER_VALIDATE_INT) === false) {
             $errors ['margen'] = "El margen debe ser un número entero";
         }
 
-        if($data['stock'] === ''){
+        if ($data['stock'] === '') {
             $errors['stock'] = "El stock es obligatorio";
-        }elseif (filter_var($data['stock'], FILTER_VALIDATE_INT) === false){
+        } elseif (filter_var($data['stock'], FILTER_VALIDATE_INT) === false) {
             $errors['stock'] = "El stock debe ser un número entero";
         }
 
-        if(empty($data['iva'])){
+        if (empty($data['iva'])) {
             $errors['iva'] = "El iva es obligatorio";
-        }elseif (filter_var($data['iva'], FILTER_VALIDATE_INT) === false){
+        } elseif (filter_var($data['iva'], FILTER_VALIDATE_INT) === false) {
             $errors['iva'] = "El iva debe ser un número entero";
-        }elseif($data['iva'] > 100){
+        } elseif ($data['iva'] > 100) {
             $errors['iva'] = "El iva no puede ser mayor a 100";
         }
         return $errors;

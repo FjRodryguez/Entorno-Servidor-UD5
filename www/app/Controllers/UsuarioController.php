@@ -14,8 +14,7 @@ use http\Message;
 
 class UsuarioController extends BaseController
 {
-    private IUsuarioModel $modelo;
-    const ORDER_DEFECTO = 1;
+    public const ORDER_DEFECTO = 1;
 
     public function usuariosFiltro(): void
     {
@@ -24,11 +23,6 @@ class UsuarioController extends BaseController
             'breadcrumb' => ['Usuarios', 'Listado usuarios']
         ];
 
-        if (isset($_SESSION['flash']['message'])) {
-            $data['message'] = $_SESSION['flash']['message'];
-            $data['message_type'] = $_SESSION['flash']['message_type'] ?? 'info';
-            unset($_SESSION['flash']);
-        }
         $auxRolModel = new AuxRolModel();
         $data['roles'] = $auxRolModel->getAll();
 
@@ -87,6 +81,7 @@ class UsuarioController extends BaseController
 
         $usuarios = $model->getUsuarioFiltros($filtros, $order, $page);
 
+
         $data['input'] = filter_input_array(INPUT_GET, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $data['usuarios'] = $this->calcularNeto($usuarios);
@@ -130,22 +125,6 @@ class UsuarioController extends BaseController
         return self::ORDER_DEFECTO;
     }
 
-    public function getAllUsuarios(): void
-    {
-        $data = [
-            'titulo' => 'Mostrar todos los usuarios',
-            'breadcrumb' => ['Usuarios', 'Mostrar todos']
-        ];
-        $model = new UsuarioModel();
-        $usuarios = $model->getUsuarios();
-
-        $data['usuarios'] = $this->calcularNeto($usuarios);
-        $this->view->showViews(
-            array('templates/header.view.php', 'usuarios.view.php', 'templates/footer.view.php'),
-            $data
-        );
-    }
-
     private function calcularNeto(array $usuarios): array
     {
         foreach ($usuarios as &$usuario) {
@@ -159,48 +138,6 @@ class UsuarioController extends BaseController
             }
         }
         return $usuarios;
-    }
-
-    public function getAllUsuariosOrderBySalar(): void
-    {
-        $data = [
-            'titulo' => 'Mostrar todos los usuarios',
-            'breadcrumb' => ['Usuarios', 'Mostrar ordenados por salario']
-        ];
-        $model = new UsuarioModel();
-        $data['usuarios'] = $this->calcularNeto($model->getUsuariosOrderBySalarioBruto());
-        $this->view->showViews(
-            array('templates/header.view.php', 'usuarios.view.php', 'templates/footer.view.php'),
-            $data
-        );
-    }
-
-    public function getUsuariosStandard(): void
-    {
-        $data = [
-            'titulo' => 'Usuarios estándar',
-            'breadcrumb' => ['Usuarios', 'Usuario estándar']
-        ];
-        $model = new UsuarioModel();
-        $data['usuarios'] = $this->calcularNeto($model->getUsuariosStandard());
-        $this->view->showViews(
-            array('templates/header.view.php', 'usuarios.view.php', 'templates/footer.view.php'),
-            $data
-        );
-    }
-
-    public function getUsuariosCarlos(): void
-    {
-        $data = [
-            'titulo' => 'Usuarios estándar',
-            'breadcrumb' => ['Usuarios', 'Usuario Carlos']
-        ];
-        $model = new UsuarioModel();
-        $data['usuarios'] = $this->calcularNeto($model->getUsuariosCarlos());
-        $this->view->showViews(
-            array('templates/header.view.php', 'usuarios.view.php', 'templates/footer.view.php'),
-            $data
-        );
     }
 
     public function showNewUsuario(array $input = [], array $errors = []): void
@@ -234,12 +171,12 @@ class UsuarioController extends BaseController
             }
             $model = new UsuarioModel();
             if ($model->insertUsuario($insertData)) {
-                $mensaje = new Mensaje('Usuario guardado correctamente', Mensaje::SUCCESS, 'Éxito');
+                $mensaje = new Mensaje('Usuario insertado correctamente', Mensaje::SUCCESS, 'Éxito');
                 $this->addFlashMessage($mensaje);
                 header('Location: /usuarios-filtro');
             } else {
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $mensaje = new Mensaje('No se ha podido guardar el usuario', Mensaje::ERROR, 'Error');
+                $mensaje = new Mensaje('No se ha podido realizar el guardado', Mensaje::ERROR, 'Error indeterminado');
                 $this->addFlashMessage($mensaje);
                 $this->showNewUsuario($input, $errors);
             }
@@ -373,7 +310,7 @@ class UsuarioController extends BaseController
                 header('Location: /usuarios-filtro');
             } else {
                 $input = filter_var_array($_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $mensaje = new Mensaje('No se ha podido modificar el usuario', Mensaje::ERROR, 'Error');
+                $mensaje = new Mensaje('No se ha podido realizar las modificaciones propuestas', Mensaje::ERROR, 'Error indeterminado');
                 $this->addFlashMessage($mensaje);
                 $this->showEditUsuario($username, $input, $errors);
             }

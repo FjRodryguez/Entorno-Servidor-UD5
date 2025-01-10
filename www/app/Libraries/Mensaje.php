@@ -38,4 +38,15 @@ class Mensaje
     {
         return $this->titulo;
     }
+
+    public function getIcon()
+    {
+        return match ($this->tipoMensaje) {
+            self::INFO => 'fa fa-info',
+            self::ERROR => 'fa fa-ban',
+            self::SUCCESS => 'fa fa-check',
+            self::WARNING => 'fa fa-warning',
+            default => ''
+        };
+    }
 }

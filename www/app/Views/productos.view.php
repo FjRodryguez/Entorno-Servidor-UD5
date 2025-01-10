@@ -103,13 +103,15 @@
                 <div class="col-6">
                     <h6 class="m-0 font-weight-bold text-primary">Productos</h6>
                 </div>
-                <div class="col-6">
-                    <div class="m-0 font-weight-bold justify-content-end">
-                        <a href="<?php echo $_ENV['host.folder'] . 'productos/new'; ?>"
-                           class="btn btn-primary ml-1 float-right"> Nuevo
-                            Producto <i class="fas fa-plus-circle"></i></a>
+                <?php if (str_contains($_SESSION['permisos']['productos'], 'w')) { ?>
+                    <div class="col-6">
+                        <div class="m-0 font-weight-bold justify-content-end">
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos/new'; ?>"
+                               class="btn btn-primary ml-1 float-right"> Nuevo
+                                Producto <i class="fas fa-plus-circle"></i></a>
+                        </div>
                     </div>
-                </div>
+                <?php } ?>
             </div>
             <!-- Card Body -->
             <div class="card-body" id="card_table">
@@ -160,7 +162,8 @@
                                         class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
                                 Margen</a>
                         </th>
-                        <th><a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 8) ? '-' : '') ?>8"><?php if (abs($order) == 8) { ?>
+                        <th>
+                            <a href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'order=' . (($order == 8) ? '-' : '') ?>8"><?php if (abs($order) == 8) { ?>
                                 <i
                                         class="fas fa-sort-amount-<?php echo ($order < 0) ? 'up' : 'down'; ?>"></i><?php } ?>
                                 PVP</a></th>
@@ -179,8 +182,20 @@
                             <td><?php echo number_format($producto['coste'], 2, ',', '.'); ?></td>
                             <td><?php echo number_format($producto['margen'], 2, ',', '.'); ?></td>
                             <td><?php echo str_replace([',', '.', '_'], ['_', ',', '.'], $producto['pvp']) ?></td>
-                            <td><a href="<?php echo $_ENV['host.folder'] . 'productos/edit/' . $producto['codigo'];?>" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Editar producto"><i class="fas fa-edit"></i></a></td>
-                            <td><a href="<?php echo $_ENV['host.folder'] . 'productos/delete/' . $producto['codigo'];?>" class="btn btn-danger" data-toggle="tooltipo" data-placement="top" title="Borrar producto" onclick="return confirm('Desea borrar el producto?') == true"><i class="fas fa-trash"></i></a></td>
+                            <?php if (str_contains($_SESSION['permisos']['productos'], 'w')) { ?>
+                                <td>
+                                    <a href="<?php echo $_ENV['host.folder'] . 'productos/edit/' . $producto['codigo']; ?>"
+                                       class="btn btn-success" data-toggle="tooltip" data-placement="top"
+                                       title="Editar producto"><i class="fas fa-edit"></i></a></td>
+                            <?php } ?>
+                            <?php if (str_contains($_SESSION['permisos']['productos'], 'd')) { ?>
+                                <td>
+                                    <a href="<?php echo $_ENV['host.folder'] . 'productos/delete/' . $producto['codigo']; ?>"
+                                       class="btn btn-danger" data-toggle="tooltipo" data-placement="top"
+                                       title="Borrar producto"
+                                       onclick="return confirm('Desea borrar el producto?') == true"><i
+                                                class="fas fa-trash"></i></a></td>
+                            <?php } ?>
                         </tr>
                     <?php } ?>
                     </tbody>
@@ -189,36 +204,44 @@
             <div class="card-footer">
                 <nav aria-label="Navegacion por paginas">
                     <ul class="pagination justify-content-center">
-                        <?php if($page !== 1){?>
-                        <li class="page-item">
-                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString?>page=1" aria-label="First">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">First</span>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page-1)?>" aria-label="Previous">
-                                <span aria-hidden="true">&lt;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
-                        <?php }?>
+                        <?php if ($page !== 1) { ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString ?>page=1"
+                                   aria-label="First">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page - 1) ?>"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&lt;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                        <?php } ?>
 
-                        <li class="page-item active"><a class="page-link" href="#"><?php echo $page?></a></li>
-                        <?php if($page !== $maxPage){?>
-                        <li class="page-item">
-                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page+1)?>" aria-label="Next">
-                                <span aria-hidden="true">&gt;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . $maxPage;?>" aria-label="Last">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Last</span>
-                            </a>
-                        </li>
-                        <?php }?>
+                        <li class="page-item active"><a class="page-link" href="#"><?php echo $page ?></a></li>
+                        <?php if ($page !== $maxPage) { ?>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . ($page + 1) ?>"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">&gt;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="<?php echo $_ENV['host.folder'] . 'productos?' . $queryString . 'page=' . $maxPage; ?>"
+                                   aria-label="Last">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Last</span>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </nav>
             </div>

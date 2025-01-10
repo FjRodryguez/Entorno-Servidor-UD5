@@ -8,7 +8,10 @@
                 <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <div class="col-9"><h6 class="m-0 font-weight-bold text-primary"><?php echo $titulo; ?></h6></div>
-                    <div class="col-3 text-right"><a href="<?php echo $_SERVER['REQUEST_URI']; ?>/new" value="" class="btn btn-primary">+ Nuevo registro</a></div>
+                    <?php if (str_contains($_SESSION['permisos']['csv'], 'w')) { ?>
+                        <div class="col-3 text-right"><a href="<?php echo $_SERVER['REQUEST_URI']; ?>/new" value=""
+                                                         class="btn btn-primary">+ Nuevo registro</a></div>
+                    <?php } ?>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body" id="card_table">
@@ -16,7 +19,9 @@
                     <table id="tabladatos" class="table table-striped">
                         <?php
                         $primerRegistro = true;
-                        foreach ($registros as $row) {
+                        foreach ($registros
+
+                                 as $row) {
                         if ($primerRegistro) {
                         ?>
                         <thead>
