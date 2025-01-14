@@ -21,26 +21,28 @@
         </li>
         <!-- Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library -->
-        <?php if(isset($_SESSION['permisos']['demo-proveedores'])){?>
-        <li class="nav-item <?php echo (in_array($_SERVER['REQUEST_URI'], [$_ENV['host.folder'] . 'demo-proveedores'])) ? 'menu-open' : ''; ?>">
-            <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>
-                    Panel de control
-                    <i class="right fas fa-angle-left"></i>
-                </p>
-            </a>
-            <ul class="nav nav-treeview">
-                <li class="nav-item">
-                    <a href="/demo-proveedores"
-                       class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'demo-proveedores' ? 'active' : ''; ?>">
-                        <i class="fas fa-laptop-code nav-icon"></i>
-                        <p>Demo Proveedores</p>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <?php }?>
+        <?php if (isset($_SESSION['permisos']['demo-proveedores'])) { ?>
+            <li class="nav-item <?php echo (in_array($_SERVER['REQUEST_URI'], [$_ENV['host.folder'] . 'demo-proveedores'])) ? 'menu-open' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                        Panel de control
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/demo-proveedores"
+                           class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'demo-proveedores' ? 'active' : ''; ?>">
+                            <i class="fas fa-laptop-code nav-icon"></i>
+                            <p>Demo Proveedores</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        <?php } ?>
+        <?php
+        if ($_SESSION['permisos']['csv']->isRead()) { ?>
         <li class="nav-item <?php echo (in_array($_SERVER['REQUEST_URI'], [$_ENV['host.folder'] . 'poblacion-pontevedra', $_ENV['host.folder'] . 'poblacion-grupos-edad', $_ENV['host.folder'] . 'poblacion-pontevedra-2020'], $_ENV['host.folder'] . 'formulario-poblacion-pontevedra')) ? 'menu-open' : ''; ?>">
             <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-file-excel"></i>
@@ -72,6 +74,10 @@
                     </a>
                 </li>
             </ul>
+            <?php } ?>
+            <?php
+            if ($_SESSION['permisos']['usuarios']->isRead()) {
+            ?>
         <li class="nav-item">
             <a href="/usuarios-filtro"
                class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'usuarios-filtro' ? 'active' : ''; ?>">
@@ -81,6 +87,7 @@
                 </p>
             </a>
         </li>
+    <?php } ?>
         <?php if (isset($_SESSION['permisos']['productos'])) { ?>
             <li class="nav-item">
                 <a href="/productos"
@@ -114,7 +121,9 @@
                 </a>
             </li>
         <?php } ?>
-        <?php if (isset($_SESSION['permisos']['usuarios-sistema'])) { ?>
+        <?php
+        if ($_SESSION['permisos']['usuarios-sistema']->isRead()) {
+            ?>
             <li class="nav-item">
                 <a href="/usuarios-sistema"
                    class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'usuarios-sistema' ? 'active' : ''; ?>">

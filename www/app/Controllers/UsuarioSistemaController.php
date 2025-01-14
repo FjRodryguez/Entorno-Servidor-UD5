@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Com\Daw2\Controllers;
@@ -6,13 +7,18 @@ namespace Com\Daw2\Controllers;
 use Com\Daw2\Core\BaseController;
 use Com\Daw2\Libraries\GoogleOAuth;
 use Com\Daw2\Libraries\Mensaje;
+use Com\Daw2\Libraries\Permisos;
 use Com\Daw2\Libraries\RemoteImageDownloader;
 use Com\Daw2\Models\RolModel;
 use Com\Daw2\Models\UsuarioSistemaModel;
 
 class UsuarioSistemaController extends BaseController
 {
-    const IDIOMAS = ['es', 'en'];
+    private const IDIOMAS = ['es', 'en'];
+
+    private const ID_ROL_ADMIN = 1;
+    private const ID_ROL_ENCARGADO = 2;
+    private const ID_ROL_STAFF = 3;
 
     public const ROL_PUBLIC = 3;
 
@@ -159,15 +165,29 @@ class UsuarioSistemaController extends BaseController
             $this->addFlashMessage(new Mensaje('Usuario no disponible', Mensaje::ERROR, 'Error'));
             header('Location: ' . $_ENV['host.folder'] . 'usuarios-sistema');
         } else {
-            $errors = $this->checkErrors($_POST, oldEmail: $row['email']);
+            $errors = $this->checkErrors(
+                data: array_merge($_POST, ['id_usuario' => $idUsuarioSistema]),
+                isEdit: true
+            );
             if ($errors === []) {
-                $_POST['baja'] = isset($_POST['baja']) ? 1 : 0;
-                unset($_POST['password2']);
-                $ok = $model->editUsuario($idUsuarioSistema, $_POST);
+                $model = new UsuarioSistemaModel();
+                $ok = $model->updateUsuarioSistema(
+                    [
+                        'nombre' => $_POST['nombre'],
+                        'email' => $_POST['email'],
+                        'id_usuario' => $idUsuarioSistema,
+                        'id_rol' => $_POST['id_rol'],
+                        'idioma' => $_POST['idioma'],
+                        'baja' => (isset($_POST['baja']) ? 1 : 0)
+                    ]
+                );
                 if ($ok) {
-                    $this->addFlashMessage(new Mensaje('Usuario editado correctamente', Mensaje::SUCCESS, 'Éxito'));
+                    if (!empty($_POST['password'])) {
+                        $model->updatePassword($idUsuarioSistema, $_POST['password']);
+                    }
+                    $this->addFlashMessage(new Mensaje('Usuario modificado correctamente', Mensaje::SUCCESS, 'Éxito'));
                 } else {
-                    $this->addFlashMessage(new Mensaje('No se ha podido editar al usuario', Mensaje::ERROR, 'Error'));
+                    $this->addFlashMessage(new Mensaje('No se ha podido modificar al usuario', Mensaje::ERROR, 'Error'));
                 }
                 header('Location: ' . $_ENV['host.folder'] . 'usuarios-sistema');
             } else {
@@ -177,7 +197,7 @@ class UsuarioSistemaController extends BaseController
         }
     }
 
-    private function checkErrors(array $data, bool $fromPublic = false, string $oldEmail = ''): array
+    private function checkErrors(array $data, bool $fromPublic = false, bool $isEdit = false): array
     {
         $errors = [];
         if (!preg_match('/^\p{L}[ \p{L}]{2,253}\p{L}/iu', $data['nombre'])) {
@@ -187,27 +207,28 @@ class UsuarioSistemaController extends BaseController
         if (filter_var($data['email'], FILTER_VALIDATE_EMAIL) === false) {
             $errors['email'] = 'Inserte un email válido';
         } else {
-            if ($data['email'] !== $oldEmail) {
-                $usuarioSistemaModel = new UsuarioSistemaModel();
-                $row = $usuarioSistemaModel->getByEmail($data['email']);
-                if (!is_null($row)) {
-                    $errors['email'] = 'El email seleccionado ya existe en el sistema';
-                }
+            $usuarioSistemaModel = new UsuarioSistemaModel();
+            $row = $usuarioSistemaModel->getByEmail($data['email']);
+            if (!is_null($row) && (int)$row['id_usuario'] !== $data['id_usuario']) {
+                $errors['email'] = 'El email seleccionado ya existe en el sistema';
             }
         }
-        /*
-        * El password debe contener:
-        * * Una letra mayúscula
-        * * Una letra minúscula
-        * * Un número
-        * * Longitud mínima: 8
-        */
-        if (!preg_match('/^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d).{8,}$/u', $data['password'])) {
-            $errors['password'] = 'El password debe tener una longitud mínima de 8 y contener una mayúscula, una minúscula y un número';
-        }
+        //Solo checkeamos el password si es un alta o si se ha insertado algún texto en password o password2
+        if (!$isEdit || !empty($data['password']) || !empty($data['password2'])) {
+            /*
+             * El password debe contener:
+             * * Una letra mayúscula
+             * * Una letra minúscula
+             * * Un número
+             * * Longitud mínima: 8
+             */
+            if (!preg_match('/^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d).{8,}$/u', $data['password'])) {
+                $errors['password'] = 'El password debe tener una longitud mínima de 8 y contener una mayúscula, una minúscula y un número';
+            }
 
-        if ($data['password'] !== $data['password2']) {
-            $errors['password'] = 'Los passwords no coinciden';
+            if ($data['password'] !== $data['password2']) {
+                $errors['password'] = 'Los passwords no coinciden';
+            }
         }
 
         if (!$fromPublic && !in_array($data['idioma'], self::IDIOMAS)) {
@@ -215,7 +236,7 @@ class UsuarioSistemaController extends BaseController
         }
 
         $rolModel = new RolModel();
-        if (!$fromPublic && is_null($rolModel->find((int)$data['id_rol']))) {
+        if (!$fromPublic && filter_input(INPUT_POST, 'id_rol') && is_null($rolModel->find((int)$data['id_rol']))) {
             $errors['id_rol'] = 'El rol seleccionado no es válido';
         }
 
@@ -255,33 +276,6 @@ class UsuarioSistemaController extends BaseController
         header('Location: ' . $_ENV['host.folder'] . 'usuarios-sistema');
     }
 
-    public function getPermission(int $rol): array
-    {
-        $permisos = [];
-        if ($rol == 1) {
-            $permisos['demo-proveedores'] = 'rwd';
-            $permisos['csv'] = 'rwd';
-            $permisos['usuarios'] = 'rwd';
-            $permisos['productos'] = 'rwd';
-            $permisos['categorias'] = 'rwd';
-            $permisos['proveedores'] = 'rwd';
-            $permisos['usuarios-sistema'] = 'rwd';
-        }
-        if ($rol == 2) {
-            $permisos['csv'] = 'rw';
-            $permisos['usuarios'] = 'rw';
-            $permisos['productos'] = 'rw';
-            $permisos['categorias'] = 'rw';
-            $permisos['proveedores'] = 'rw';
-        }
-        if ($rol == 3) {
-            $permisos['csv'] = 'r';
-            $permisos['usuarios'] = 'r';
-            $permisos['productos'] = 'r';
-        }
-        return $permisos;
-    }
-
     public function doGoogleLogin()
     {
         try {
@@ -317,11 +311,37 @@ class UsuarioSistemaController extends BaseController
         unset($usuario['password']);
         session_regenerate_id();
         $_SESSION['usuario'] = $usuario;
-        $_SESSION['permisos'] = $this->getPermission((int)$usuario['id_rol']);
         $_SESSION['usuario']['methodLogin'] = $method;
+        //$_SESSION['permisos'] = $this->getPermisos((int)$usuario['id_rol']);
+        $_SESSION['permisos'] = (new RolModel())->getPermisos((int)$usuario['id_rol']);
         $model = new UsuarioSistemaModel();
         $model->setLastDate((int)$usuario['id_usuario']);
         header('Location: ' . $_ENV['base.url']);
+    }
+
+    private function getPermisos(int $idRol): array
+    {
+        $permisos = [
+            'usuarios-sistema' => new Permisos(''),
+            'usuarios' => new Permisos(''),
+            'csv' => new Permisos('')
+        ];
+        return match ($idRol) {
+            self::ID_ROL_ADMIN => [
+                'usuarios-sistema' => new Permisos('rwd'),
+                'usuarios' => new Permisos('rwd'),
+                'csv' => new Permisos('rwd')
+            ],
+            self::ID_ROL_ENCARGADO => array_replace($permisos, [
+                'usuarios' => new Permisos('rwd'),
+                'csv' => new Permisos('rwd')
+            ]),
+            self::ID_ROL_STAFF => array_replace($permisos, [
+                'usuarios' => new Permisos('r'),
+                'csv' => new Permisos('r')
+            ]),
+            default => $permisos
+        };
     }
 
     public function doGoogleRegister()

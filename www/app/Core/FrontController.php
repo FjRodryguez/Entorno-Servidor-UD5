@@ -80,7 +80,7 @@ class FrontController
                 'get'
             );
 
-            if (isset($_SESSION['permisos']['usuarios'])) {
+            if ($_SESSION['permisos']['usuarios']->isRead()) {
                 Route::add(
                     '/usuarios-filtro',
                     function () {
@@ -89,53 +89,8 @@ class FrontController
                     },
                     'get'
                 );
-
-                if (str_contains($_SESSION['permisos']['usuarios'], 'w')) {
-                    Route::add(
-                        '/usuarios/new',
-                        function () {
-                            $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                            $controlador->showNewUsuario();
-                        },
-                        'get'
-                    );
-                    Route::add(
-                        '/usuarios/new',
-                        function () {
-                            $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                            $controlador->doNewUsuario();
-                        },
-                        'post'
-                    );
-                    Route::add(
-                        '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
-                        function ($usuario) {
-                            $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                            $controlador->showEditUsuario($usuario);
-                        },
-                        'get'
-                    );
-                    Route::add(
-                        '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
-                        function ($usuario) {
-                            $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                            $controlador->doEditUsuario($usuario);
-                        },
-                        'post'
-                    );
-                }
-                if (str_contains($_SESSION['permisos']['usuarios'], 'd')) {
-                    Route::add(
-                        '/usuarios/delete/(\p{L}[\p{L}_\p{N}]{2,49})',
-                        function ($usuario) {
-                            $controlador = new \Com\Daw2\Controllers\UsuarioController();
-                            $controlador->deleteUsuario($usuario);
-                        },
-                        'get'
-                    );
-                }
             }
-            if (isset($_SESSION['permisos']['usuarios-sistema'])) {
+            if ($_SESSION['permisos']['usuarios-sistema']->isRead()) {
                 Route::add(
                     '/usuarios-sistema',
                     function () {
@@ -144,7 +99,8 @@ class FrontController
                     },
                     'get'
                 );
-
+            }
+            if ($_SESSION['permisos']['usuarios-sistema']->isWrite()) {
                 Route::add(
                     '/usuarios-sistema/new',
                     function () {
@@ -162,8 +118,6 @@ class FrontController
                     },
                     'post'
                 );
-
-
                 Route::add(
                     '/usuarios-sistema/edit/([0-9]+)',
                     function ($id) {
@@ -181,6 +135,8 @@ class FrontController
                     },
                     'post'
                 );
+            }
+            if ($_SESSION['permisos']['usuarios-sistema']->isDelete()) {
                 Route::add(
                     '/usuarios-sistema/delete/([0-9]+)',
                     function ($id) {
@@ -188,6 +144,95 @@ class FrontController
                         $controlador->deleteUsuario((int)$id);
                     },
                     'get'
+                );
+            }
+            if ($_SESSION['permisos']['usuarios']->isWrite()) {
+                Route::add(
+                    '/usuarios/new',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                        $controlador->showNewUsuario();
+                    },
+                    'get'
+                );
+                Route::add(
+                    '/usuarios/new',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                        $controlador->doNewUsuario();
+                    },
+                    'post'
+                );
+                Route::add(
+                    '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
+                    function ($usuario) {
+                        $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                        $controlador->showEditUsuario($usuario);
+                    },
+                    'get'
+                );
+                Route::add(
+                    '/usuarios/edit/(\p{L}[\p{L}_\p{N}]{2,49})',
+                    function ($usuario) {
+                        $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                        $controlador->doEditUsuario($usuario);
+                    },
+                    'post'
+                );
+            }
+            if ($_SESSION['permisos']['usuarios']->isDelete()) {
+                Route::add(
+                    '/usuarios/delete/(\p{L}[\p{L}_\p{N}]{2,49})',
+                    function ($usuario) {
+                        $controlador = new \Com\Daw2\Controllers\UsuarioController();
+                        $controlador->deleteUsuario($usuario);
+                    },
+                    'get'
+                );
+            }
+            if ($_SESSION['permisos']['csv']->isRead()) {
+                Route::add(
+                    '/poblacion-pontevedra',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\CsvController();
+                        $controlador->showPoblacionPontevedra();
+                    },
+                    'get'
+                );
+                Route::add(
+                    '/poblacion-grupos-edad',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\CsvController();
+                        $controlador->showPoblacionGruposEdad();
+                    },
+                    'get'
+                );
+
+                Route::add(
+                    '/poblacion-pontevedra-2020',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\CsvController();
+                        $controlador->showPoblacionPontevedra2020();
+                    },
+                    'get'
+                );
+            }
+            if ($_SESSION['permisos']['csv']->isWrite()) {
+                Route::add(
+                    '/poblacion-pontevedra/new',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\CsvController();
+                        $controlador->showAltaPoblacionPontevedra();
+                    },
+                    'get'
+                );
+                Route::add(
+                    '/poblacion-pontevedra/new',
+                    function () {
+                        $controlador = new \Com\Daw2\Controllers\CsvController();
+                        $controlador->doAltaPoblacionPontevedra();
+                    },
+                    'post'
                 );
             }
 
@@ -291,53 +336,6 @@ class FrontController
                 },
                 'get'
             );
-
-            if (isset($_SESSION['permisos']['csv'])) {
-                Route::add(
-                    '/poblacion-pontevedra',
-                    function () {
-                        $controlador = new \Com\Daw2\Controllers\CsvController();
-                        $controlador->showPoblacionPontevedra();
-                    },
-                    'get'
-                );
-
-                if (str_contains($_SESSION['permisos']['csv'], 'w')) {
-                    Route::add(
-                        '/poblacion-pontevedra/new',
-                        function () {
-                            $controlador = new \Com\Daw2\Controllers\CsvController();
-                            $controlador->showAltaPoblacionPontevedra();
-                        },
-                        'get'
-                    );
-                    Route::add(
-                        '/poblacion-pontevedra/new',
-                        function () {
-                            $controlador = new \Com\Daw2\Controllers\CsvController();
-                            $controlador->doAltaPoblacionPontevedra();
-                        },
-                        'post'
-                    );
-                }
-                Route::add(
-                    '/poblacion-grupos-edad',
-                    function () {
-                        $controlador = new \Com\Daw2\Controllers\CsvController();
-                        $controlador->showPoblacionGruposEdad();
-                    },
-                    'get'
-                );
-
-                Route::add(
-                    '/poblacion-pontevedra-2020',
-                    function () {
-                        $controlador = new \Com\Daw2\Controllers\CsvController();
-                        $controlador->showPoblacionPontevedra2020();
-                    },
-                    'get'
-                );
-            }
             if (isset($_SESSION['permisos']['demo-proveedores'])) {
                 Route::add(
                     '/demo-proveedores',
