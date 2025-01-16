@@ -103,7 +103,7 @@
                 <div class="col-6">
                     <h6 class="m-0 font-weight-bold text-primary">Productos</h6>
                 </div>
-                <?php if (str_contains($_SESSION['permisos']['productos'], 'w')) { ?>
+                <?php if ($_SESSION['permisos']['productos']->isWrite()) { ?>
                     <div class="col-6">
                         <div class="m-0 font-weight-bold justify-content-end">
                             <a href="<?php echo $_ENV['host.folder'] . 'productos/new'; ?>"
@@ -182,13 +182,13 @@
                             <td><?php echo number_format($producto['coste'], 2, ',', '.'); ?></td>
                             <td><?php echo number_format($producto['margen'], 2, ',', '.'); ?></td>
                             <td><?php echo str_replace([',', '.', '_'], ['_', ',', '.'], $producto['pvp']) ?></td>
-                            <?php if (str_contains($_SESSION['permisos']['productos'], 'w')) { ?>
+                            <?php if ($_SESSION['permisos']['productos']->isWrite()) { ?>
                                 <td>
                                     <a href="<?php echo $_ENV['host.folder'] . 'productos/edit/' . $producto['codigo']; ?>"
                                        class="btn btn-success" data-toggle="tooltip" data-placement="top"
                                        title="Editar producto"><i class="fas fa-edit"></i></a></td>
                             <?php } ?>
-                            <?php if (str_contains($_SESSION['permisos']['productos'], 'd')) { ?>
+                            <?php if ($_SESSION['permisos']['productos']->isDelete()) { ?>
                                 <td>
                                     <a href="<?php echo $_ENV['host.folder'] . 'productos/delete/' . $producto['codigo']; ?>"
                                        class="btn btn-danger" data-toggle="tooltipo" data-placement="top"

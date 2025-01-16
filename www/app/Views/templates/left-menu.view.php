@@ -88,7 +88,7 @@
             </a>
         </li>
     <?php } ?>
-        <?php if (isset($_SESSION['permisos']['productos'])) { ?>
+        <?php if ($_SESSION['permisos']['productos']->isRead()) { ?>
             <li class="nav-item">
                 <a href="/productos"
                    class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'productos' ? 'active' : ''; ?>">
@@ -99,7 +99,7 @@
                 </a>
             </li>
         <?php } ?>
-        <?php if (isset($_SESSION['permisos']['categorias'])) { ?>
+        <?php if ($_SESSION['permisos']['categorias']->isRead()) { ?>
             <li class="nav-item">
                 <a href="/categorias"
                    class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'categorias' ? 'active' : ''; ?>">
@@ -110,7 +110,7 @@
                 </a>
             </li>
         <?php } ?>
-        <?php if (isset($_SESSION['permisos']['proovedores'])) { ?>
+        <?php if ($_SESSION['permisos']['proveedores']->isRead()) { ?>
             <li class="nav-item">
                 <a href="/proveedores"
                    class="nav-link <?php echo $_SERVER['REQUEST_URI'] === $_ENV['host.folder'] . 'proveedores' ? 'active' : ''; ?>">

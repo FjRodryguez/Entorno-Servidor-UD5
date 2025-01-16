@@ -111,7 +111,7 @@
                         <h6 class="m-0 install font-weight-bold text-primary">
                             Usuarios</h6>
                     </div>
-                    <?php if (str_contains($_SESSION['permisos']['usuarios'], 'w')) { ?>
+                    <?php if ($_SESSION['permisos']['usuarios']->isWrite()) { ?>
                         <div class="col-6">
                             <div class="m-0 font-weight-bold justify-content-end">
                                 <a href="<?php echo $_ENV['host.folder'] . 'usuarios/new'; ?>"
@@ -171,14 +171,14 @@
                                 <td><?php echo !empty($usuario['salarioNeto']) ? str_replace([',', '.', '_'], ['_', ',', '.'], $usuario['salarioNeto']) : '-'; ?></td>
                                 <td><?php echo $usuario['nombre_rol'] ?></td>
                                 <td><?php echo $usuario['country_name'] ?></td>
-                                <?php if (str_contains($_SESSION['permisos']['usuarios'], 'w')) { ?>
+                                <?php if ($_SESSION['permisos']['usuarios']->isWrite()) { ?>
                                     <td>
                                         <a href="<?php echo $_ENV['host.folder'] . 'usuarios/edit/' . $usuario['username']; ?>"
                                            class="btn btn-success" data-toggle="tooltip" data-placement="top"
                                            title="Editar usuario"><i class="fas fa-edit"></i></a>
                                     </td>
                                 <?php } ?>
-                                <?php if (str_contains($_SESSION['permisos']['usuarios'], 'd')) { ?>
+                                <?php if ($_SESSION['permisos']['usuarios']->isDelete()) { ?>
                                     <td>
                                         <a href="<?php echo $_ENV['host.folder'] . 'usuarios/delete/' . $usuario['username']; ?>"
                                            class="btn btn-danger" data-toggle="tooltip" data-placement="top"

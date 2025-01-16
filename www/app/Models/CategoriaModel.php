@@ -9,7 +9,8 @@ use PDO;
 
 class CategoriaModel extends BaseDbModel
 {
-    function getAllCategorias()
+    private const ORDER_STRING = ' ORDER BY nombre_categoria ASC';
+    function getAllCategorias(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM categoria ORDER BY nombre_categoria");
         $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -17,6 +18,25 @@ class CategoriaModel extends BaseDbModel
             $categoria['nombre_completo'] = $this->getPadre($categoria['id_padre']) . $categoria['nombre_categoria'];
         }
         return $categorias;
+    }
+
+    public function get(array $filtros = []): array
+    {
+        $sql = 'SELECT * FROM categoria';
+        $condiciones = [];
+        $variables = [];
+        if (!empty($filtros['nombre_categoria'])) {
+            $condiciones[] = 'nombre_categoria LIKE :nombre_categoria';
+            $variables['nombre_categoria'] = "%" . $filtros['nombre_categoria'] . "%";
+        }
+        if ($condiciones === []) {
+            $stmt = $this->pdo->query($sql . self::ORDER_STRING);
+        } else {
+            $sql .= ' WHERE ' . implode(' AND ', $condiciones) . self::ORDER_STRING;
+            $stmt = $this->pdo->prepare($sql);
+        }
+        $stmt->execute($variables);
+        return $stmt->fetchAll();
     }
 
     private function getPadre($idPadre)
@@ -32,12 +52,13 @@ class CategoriaModel extends BaseDbModel
         return $res;
     }
 
-    public function getCategoria(int $idCategoria) : ?array{
+    public function getCategoria(int $idCategoria): ?array
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_categoria = :idCategoria");
         $stmt->execute([':idCategoria' => $idCategoria]);
-        if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return $row;
-        }else{
+        } else {
             return null;
         }
     }

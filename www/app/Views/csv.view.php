@@ -8,7 +8,7 @@
                 <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <div class="col-9"><h6 class="m-0 font-weight-bold text-primary"><?php echo $titulo; ?></h6></div>
-                    <?php if (str_contains($_SESSION['permisos']['csv'], 'w')) { ?>
+                    <?php if ($_SESSION['permisos']['csv']->isWrite()) { ?>
                         <div class="col-3 text-right"><a href="<?php echo $_SERVER['REQUEST_URI']; ?>/new" value=""
                                                          class="btn btn-primary">+ Nuevo registro</a></div>
                     <?php } ?>

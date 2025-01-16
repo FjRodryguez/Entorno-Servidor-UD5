@@ -312,36 +312,10 @@ class UsuarioSistemaController extends BaseController
         session_regenerate_id();
         $_SESSION['usuario'] = $usuario;
         $_SESSION['usuario']['methodLogin'] = $method;
-        //$_SESSION['permisos'] = $this->getPermisos((int)$usuario['id_rol']);
         $_SESSION['permisos'] = (new RolModel())->getPermisos((int)$usuario['id_rol']);
         $model = new UsuarioSistemaModel();
         $model->setLastDate((int)$usuario['id_usuario']);
         header('Location: ' . $_ENV['base.url']);
-    }
-
-    private function getPermisos(int $idRol): array
-    {
-        $permisos = [
-            'usuarios-sistema' => new Permisos(''),
-            'usuarios' => new Permisos(''),
-            'csv' => new Permisos('')
-        ];
-        return match ($idRol) {
-            self::ID_ROL_ADMIN => [
-                'usuarios-sistema' => new Permisos('rwd'),
-                'usuarios' => new Permisos('rwd'),
-                'csv' => new Permisos('rwd')
-            ],
-            self::ID_ROL_ENCARGADO => array_replace($permisos, [
-                'usuarios' => new Permisos('rwd'),
-                'csv' => new Permisos('rwd')
-            ]),
-            self::ID_ROL_STAFF => array_replace($permisos, [
-                'usuarios' => new Permisos('r'),
-                'csv' => new Permisos('r')
-            ]),
-            default => $permisos
-        };
     }
 
     public function doGoogleRegister()

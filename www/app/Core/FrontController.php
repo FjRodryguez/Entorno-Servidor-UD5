@@ -69,7 +69,6 @@ class FrontController
                     header('Location: /login');
                 }
             );
-
         } else {
             Route::add(
                 '/logout',
@@ -79,7 +78,15 @@ class FrontController
                 },
                 'get'
             );
-
+            //Rutas de API
+            Route::add(
+                '/api/categorias',
+                function () {
+                    $controlador = new CategoriaController();
+                    $controlador->listadoAPI();
+                },
+                'get'
+            );
             if ($_SESSION['permisos']['usuarios']->isRead()) {
                 Route::add(
                     '/usuarios-filtro',
@@ -236,7 +243,7 @@ class FrontController
                 );
             }
 
-            if (isset($_SESSION['permisos']['categorias'])) {
+            if ($_SESSION['permisos']['categorias']->isRead()) {
                 Route::add(
                     '/categorias',
                     function () {
@@ -246,7 +253,7 @@ class FrontController
                     'get'
                 );
             }
-            if (isset($_SESSION['permisos']['productos'])) {
+            if ($_SESSION['permisos']['productos']->isRead()) {
                 Route::add(
                     '/productos',
                     function () {
@@ -255,7 +262,8 @@ class FrontController
                     },
                     'get'
                 );
-
+            }
+            if ($_SESSION['permisos']['productos']->isWrite()) {
                 Route::add(
                     '/productos/new',
                     function () {
@@ -291,7 +299,8 @@ class FrontController
                     },
                     'post'
                 );
-
+            }
+            if ($_SESSION['permisos']['productos']->isDelete()) {
                 Route::add(
                     '/productos/delete/([a-zA-Z]{3}\d{7})',
                     function ($producto) {
@@ -301,7 +310,7 @@ class FrontController
                     'get'
                 );
             }
-            if (isset($_SESSION['permisos']['proveedores'])) {
+            if ($_SESSION['permisos']['proveedores']->isRead()) {
                 Route::add(
                     '/proveedores',
                     function () {
@@ -336,16 +345,14 @@ class FrontController
                 },
                 'get'
             );
-            if (isset($_SESSION['permisos']['demo-proveedores'])) {
-                Route::add(
-                    '/demo-proveedores',
-                    function () {
-                        $controlador = new \Com\Daw2\Controllers\InicioController();
-                        $controlador->demo();
-                    },
-                    'get'
-                );
-            }
+            Route::add(
+                '/demo-proveedores',
+                function () {
+                    $controlador = new \Com\Daw2\Controllers\InicioController();
+                    $controlador->demo();
+                },
+                'get'
+            );
             Route::pathNotFound(
                 function () {
                     $controller = new \Com\Daw2\Controllers\ErroresController();
